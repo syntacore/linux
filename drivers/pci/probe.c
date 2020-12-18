@@ -2328,6 +2328,8 @@ struct pci_dev *pci_alloc_dev(struct pci_bus *bus)
 #ifdef CONFIG_PCI_MSI
 	raw_spin_lock_init(&dev->msi_lock);
 #endif
+	mutex_init(&dev->enable_mutex);
+
 	return dev;
 }
 EXPORT_SYMBOL(pci_alloc_dev);
