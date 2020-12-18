@@ -1906,6 +1906,10 @@ static void pci_enable_bridge(struct pci_dev *dev)
 		pci_enable_bridge(bridge);
 
 	if (pci_is_enabled(dev)) {
+		retval = pci_reenable_device(dev);
+		if (retval)
+			pci_err(dev, "Error reenabling bridge, continuing\n");
+
 		if (!dev->is_busmaster)
 			pci_set_master(dev);
 		mutex_unlock(&dev->enable_mutex);
