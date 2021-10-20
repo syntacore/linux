@@ -7,7 +7,18 @@
 #ifndef _ASM_RISCV_CACHE_H
 #define _ASM_RISCV_CACHE_H
 
+#ifdef CONFIG_CPU_RV_SCR
+#define L1_CACHE_SHIFT		4
+#define L2_CACHE_SHIFT		5
+#define L2_CACHE_BYTES		(1 << L2_CACHE_SHIFT)
+#define ARCH_DMA_MINALIGN	L2_CACHE_BYTES
+/* use the cache line size for the L2, which is where it counts */
+#define SMP_CACHE_BYTES_SHIFT	L2_CACHE_SHIFT
+#define SMP_CACHE_BYTES		L2_CACHE_BYTES
+#define INTERNODE_CACHE_SHIFT	SMP_CACHE_BYTES_SHIFT
+#else /* CONFIG_CPU_RV_SCR */
 #define L1_CACHE_SHIFT		6
+#endif /* CONFIG_CPU_RV_SCR */
 
 #define L1_CACHE_BYTES		(1 << L1_CACHE_SHIFT)
 
