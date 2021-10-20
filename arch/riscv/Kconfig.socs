@@ -111,4 +111,14 @@ config SOC_CANAAN_K210_DTB_SOURCE
 
 endif # ARCH_CANAAN
 
+config SOC_SCR
+	bool "Syntacore SoCs"
+	select SIFIVE_PLIC
+	select OF_RESERVED_MEM
+	select IOMMU_DMA if IOMMU_SUPPORT
+	select CPU_HAS_ASID
+	select DMA_GLOBAL_POOL
+	help
+	  This enables support for Syntacore SoC platform hardware.
+
 endmenu # "SoC selection"
