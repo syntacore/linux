@@ -30,4 +30,12 @@
 #define ARCH_SLAB_MINALIGN	16
 #endif
 
+#ifndef SMP_CACHE_BYTES
+#define SMP_CACHE_BYTES		L1_CACHE_BYTES
+#endif
+
+#ifdef CONFIG_ARCH_HAS_CACHE_LINE_SIZE
+#define cache_line_size()	SMP_CACHE_BYTES
+#endif
+
 #endif /* _ASM_RISCV_CACHE_H */
