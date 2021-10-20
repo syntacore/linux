@@ -372,6 +372,27 @@ config FPU
 
 endmenu
 
+menuconfig CPU_RV_SCR
+	bool "Syntacore SCRx platform support"
+	default n
+	select GENERIC_ALLOCATOR
+	select OF_RESERVED_MEM
+	select ARCH_HAS_SETUP_DMA_OPS
+	select DMA_OPS
+
+if CPU_RV_SCR
+
+config HAS_DMA
+	def_bool y
+
+config HAVE_DMA_ATTRS
+	def_bool y
+
+config ARCH_HAS_CACHE_LINE_SIZE
+	def_bool y
+
+endif # CPU_RV_SCR
+
 menu "Kernel features"
 
 source "kernel/Kconfig.hz"
