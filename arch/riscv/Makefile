@@ -107,6 +107,8 @@ head-y := arch/riscv/kernel/head.o
 
 core-$(CONFIG_RISCV_ERRATA_ALTERNATIVE) += arch/riscv/errata/
 
+core-y += arch/riscv/platforms/
+
 libs-y += arch/riscv/lib/
 libs-$(CONFIG_EFI_STUB) += $(objtree)/drivers/firmware/efi/libstub/lib.a
 
