@@ -91,7 +91,7 @@ SECTIONS
 	{
 		EXIT_DATA
 	}
-	PERCPU_SECTION(L1_CACHE_BYTES)
+	PERCPU_SECTION(SMP_CACHE_BYTES)
 
 	.rel.dyn : {
 		*(.rel.dyn*)
@@ -117,7 +117,7 @@ SECTIONS
 	. = ALIGN(SECTION_ALIGN);
 	_data = .;
 
-	RW_DATA(L1_CACHE_BYTES, PAGE_SIZE, THREAD_ALIGN)
+	RW_DATA(SMP_CACHE_BYTES, PAGE_SIZE, THREAD_ALIGN)
 	.sdata : {
 		__global_pointer$ = . + 0x800;
 		*(.sdata*)
