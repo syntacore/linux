@@ -1,0 +1,97 @@
+[
+  {
+    "EventName": "EXC_INT_RTR",
+    "EventCode": "0x0000003",
+    "BriefDescription": "Integer non-cfi instuctions retired"
+  },
+  {
+    "EventName": "EXC_FP_RTR",
+    "EventCode": "0x0000013",
+    "BriefDescription": "Float-point instructions retired"
+  },
+  {
+    "EventName": "EXC_MEM_RTR",
+    "EventCode": "0x0000023",
+    "BriefDescription": "Memory instructions retired"
+  },
+  {
+    "EventName": "EXC_0IPC_RTR",
+    "EventCode": "0x0000033",
+    "BriefDescription": "Number of cycles when no instruction retired"
+  },
+  {
+    "EventName": "EXC_1IPC_RTR",
+    "EventCode": "0x0000043",
+    "BriefDescription": "Number of cycles when 1 instruction retired"
+  },
+  {
+    "EventName": "EXC_2IPC_RTR",
+    "EventCode": "0x0000053",
+    "BriefDescription": "Number of cycles when 2 instruction retired"
+  },
+  {
+    "EventName": "EXC_3IPC_RTR",
+    "EventCode": "0x0000063",
+    "BriefDescription": "Number of cycles when 3 instruction retired"
+  },
+  {
+    "EventName": "EXC_4IPC_RTR",
+    "EventCode": "0x0000073",
+    "BriefDescription": "Number of cycles when 4 instruction retired"
+  },
+  {
+    "EventName": "EXC_BE_IDLE",
+    "EventCode": "0x0000083",
+    "BriefDescription": "Number of cycles when there is no active operation in back-end"
+  },
+  {
+    "EventName": "EXC_W_ALUMUL",
+    "EventCode": "0x0000093",
+    "BriefDescription": "Number of cycles when oldest instruction in results queue is waiting for ALU_MUL pipeline"
+  },
+  {
+    "EventName": "EXC_W_ALUDIV",
+    "EventCode": "0x00000a3",
+    "BriefDescription": "Number of cycles when oldest instruction in results queue is waiting for ALU_DIV pipeline"
+  },
+  {
+    "EventName": "EXC_W_FPU",
+    "EventCode": "0x00000b3",
+    "BriefDescription": "Number of cycles when oldest instruction in results queue is waiting for FPU pipeline"
+  },
+  {
+    "EventName": "EXC_W_LSU",
+    "EventCode": "0x00000c3",
+    "BriefDescription": "Number of cycles when oldest instruction in results queue is waiting for LSU pipeline"
+  },
+  {
+    "EventName": "EXC_W_CSR",
+    "EventCode": "0x00000d3",
+    "BriefDescription": "Number of cycles when oldest instruction in results queue is waiting for CSR pipeline"
+  },
+  {
+    "EventName": "EXC_ST_ISS",
+    "EventCode": "0x00000e3",
+    "BriefDescription": "ISS stalls"
+  },
+  {
+    "EventName": "EXC_ST_SRCT",
+    "EventCode": "0x00000f3",
+    "BriefDescription": "Stalls because of structural hazards"
+  },
+  {
+    "EventName": "EXC_ST_INT",
+    "EventCode": "0x0000103",
+    "BriefDescription": "Stalls because of integer pipelines SCB full"
+  },
+  {
+    "EventName": "EXC_ST_LSU",
+    "EventCode": "0x0000113",
+    "BriefDescription": "Stalls because of LSU CRQ full"
+  },
+  {
+    "EventName": "EXC_ST_FPU",
+    "EventCode": "0x00000123",
+    "BriefDescription": "Stalls because of FPU SCB full"
+  }
+]

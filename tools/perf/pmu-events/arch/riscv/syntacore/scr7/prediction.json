@@ -1,0 +1,52 @@
+[
+  {
+    "EventName": "PRD_CFI",
+    "EventCode": "0x0000002",
+    "BriefDescription": "CFI retired"
+  },
+  {
+    "EventName": "PRD_BRANCH",
+    "EventCode": "0x0000012",
+    "BriefDescription": "Conditional branches retired"
+  },
+  {
+    "EventName": "PRD_CALL",
+    "EventCode": "0x0000022",
+    "BriefDescription": "Calls retired"
+  },
+  {
+    "EventName": "PRD_RET",
+    "EventCode": "0x0000032",
+    "BriefDescription": "Returns retired"
+  },
+  {
+    "EventName": "PRD_DIR_JMP",
+    "EventCode": "0x0000042",
+    "BriefDescription": "Direct jumps(not call) retired"
+  },
+  {
+    "EventName": "PRD_REL_JMP",
+    "EventCode": "0x0000052",
+    "BriefDescription": "Relative jumps(not return) retired"
+  },
+  {
+    "EventName": "PRD_CFI_MIS",
+    "EventCode": "0x0000062",
+    "BriefDescription": "CFI misspredictions"
+  },
+  {
+    "EventName": "PRD_CALL_MIS",
+    "EventCode": "0x0000072",
+    "BriefDescription": "Call misspredictions"
+  },
+  {
+    "EventName": "PRD_RET_MIS",
+    "EventCode": "0x0000082",
+    "BriefDescription": "Return misspredictions"
+  },
+  {
+    "EventName": "PRD_BR_MIS",
+    "EventCode": "0x0000092",
+    "BriefDescription": "Branch misspredictions"
+  }
+]

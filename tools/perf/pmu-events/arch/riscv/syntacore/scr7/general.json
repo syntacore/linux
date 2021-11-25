@@ -1,0 +1,47 @@
+[
+  {
+    "EventName": "GEN_CYC",
+    "EventCode": "0x0000001",
+    "BriefDescription": "Cycles"
+  },
+  {
+    "EventName": "GEN_INST",
+    "EventCode": "0x0000021",
+    "BriefDescription": "Instructions retired"
+  },
+  {
+    "EventName": "GEN_ISS",
+    "EventCode": "0x0000031",
+    "BriefDescription": "Instructions issued"
+  },
+  {
+    "EventName": "GEN_SPEC_EXC",
+    "EventCode": "0x0000041",
+    "BriefDescription": "Instructions executed speculatively"
+  },
+  {
+    "EventName": "GEN_STRAP",
+    "EventCode": "0x0000061",
+    "BriefDescription": "Trap/IRQ to S-mode"
+  },
+  {
+    "EventName": "GEN_MTRAP",
+    "EventCode": "0x0000071",
+    "BriefDescription": "Trap/IRQ to M-mode"
+  },
+  {
+    "EventName": "GEN_URET",
+    "EventCode": "0x0000081",
+    "BriefDescription": "MRET/SRET to U-mode"
+  },
+  {
+    "EventName": "GEN_SRET",
+    "EventCode": "0x0000091",
+    "BriefDescription": "MRET/SRET to S-mode"
+  },
+  {
+    "EventName": "GEN_MRET",
+    "EventCode": "0x00000a1",
+    "BriefDescription": "MRET to M-mode"
+  }
+]

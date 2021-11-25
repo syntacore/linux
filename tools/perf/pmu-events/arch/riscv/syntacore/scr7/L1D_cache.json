@@ -1,0 +1,102 @@
+[
+  {
+    "EventName": "L1D_HIT",
+    "EventCode": "0x0000005",
+    "BriefDescription": "L1D hit"
+  },
+  {
+    "EventName": "L1D_MISS",
+    "EventCode": "0x0000015",
+    "BriefDescription": "L1D miss"
+  },
+  {
+    "EventName": "L1D_REFILL",
+    "EventCode": "0x0000025",
+    "BriefDescription": "L1D refill"
+  },
+  {
+    "EventName": "L1D_PREF_HIT",
+    "EventCode": "0x0000035",
+    "BriefDescription": "L1D prefetcher hit (prefetcher not implemented yet)"
+  },
+  {
+    "EventName": "L1D_PREF_MISS",
+    "EventCode": "0x0000045",
+    "BriefDescription": "L1D prefetcher miss (prefetcher not implemented yet)"
+  },
+  {
+    "EventName": "L1D_PREF_REFILL",
+    "EventCode": "0x0000055",
+    "BriefDescription": "L1D prefetcher refill (prefetcher not implemented yet)"
+  },
+  {
+    "EventName": "L1D_TLB_ACCESS",
+    "EventCode": "0x0000065",
+    "BriefDescription": "L1D TLB access"
+  },
+  {
+    "EventName": "L1D_TLB_MISS",
+    "EventCode": "0x0000075",
+    "BriefDescription": "L1D TLB miss"
+  },
+  {
+    "EventName": "L1D_SNP",
+    "EventCode": "0x0000085",
+    "BriefDescription": "L1D snoop requests"
+  },
+  {
+    "EventName": "L1D_SNP_DUMMY",
+    "EventCode": "0x0000095",
+    "BriefDescription": "L1D dummy snoop requests"
+  },
+  {
+    "EventName": "L1D_EVICT",
+    "EventCode": "0x00000a5",
+    "BriefDescription": "L1D eviction"
+  },
+  {
+    "EventName": "L1D_NC_REQ",
+    "EventCode": "0x00000b5",
+    "BriefDescription": "L1D Non-cacheable request"
+  },
+  {
+    "EventName": "L1D_SO_REQ",
+    "EventCode": "0x00000c5",
+    "BriefDescription": "L1D Strongly ordered request"
+  },
+  {
+    "EventName": "L1D_LD_SPEC",
+    "EventCode": "0x00000d5",
+    "BriefDescription": "L1D load speculatively executed"
+  },
+  {
+    "EventName": "L1D_ST_SPEC",
+    "EventCode": "0x00000e5",
+    "BriefDescription": "L1D store speculatively executed"
+  },
+  {
+    "EventName": "L1D_FENCE_SPEC",
+    "EventCode": "0x00000f5",
+    "BriefDescription": "L1D fence speculatively executed"
+  },
+  {
+    "EventName": "L1D_AMO_SPEC",
+    "EventCode": "0x0000105",
+    "BriefDescription": "L1D amo speculatively executed"
+  },
+  {
+    "EventName": "L1D_LR_SPEC",
+    "EventCode": "0x0000115",
+    "BriefDescription": "L1D load-reserved speculatively executed"
+  },
+  {
+    "EventName": "L1D_SC_SPEC",
+    "EventCode": "0x0000125",
+    "BriefDescription": "L1D store-conditional speculatively executed"
+  },
+  {
+    "EventName": "L1D_CM_SPEC",
+    "EventCode": "0x0000135",
+    "BriefDescription": "L1D cache maintenance instructions speculatively executed"
+  }
+]
