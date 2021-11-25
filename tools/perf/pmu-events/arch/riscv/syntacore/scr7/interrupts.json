@@ -1,0 +1,32 @@
+[
+  {
+    "EventName": "TRP_SSI",
+    "EventCode": "0x0000017",
+    "BriefDescription": "S-mode SW Interrupt"
+  },
+  {
+    "EventName": "TRP_MSI",
+    "EventCode": "0x0000037",
+    "BriefDescription": "M-mode SW Interrupt"
+  },
+  {
+    "EventName": "TRP_STI",
+    "EventCode": "0x0000057",
+    "BriefDescription": "S-mode Timer Interrupt"
+  },
+  {
+    "EventName": "TRP_MTI",
+    "EventCode": "0x0000077",
+    "BriefDescription": "M-mode Timer Interrupt"
+  },
+  {
+    "EventName": "TRP_SEI",
+    "EventCode": "0x0000097",
+    "BriefDescription": "S-mode External Interrupt"
+  },
+  {
+    "EventName": "TRP_MEI",
+    "EventCode": "0x00000b7",
+    "BriefDescription": "M-mode External Interrupt"
+  }
+]

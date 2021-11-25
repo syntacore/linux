@@ -1,0 +1,67 @@
+[
+  {
+    "EventName": "TRP_IAF",
+    "EventCode": "0x0000016",
+    "BriefDescription": "Instruction Access Fault"
+  },
+  {
+    "EventName": "TRP_ILLEG",
+    "EventCode": "0x0000026",
+    "BriefDescription": "Illegal instruction"
+  },
+  {
+    "EventName": "TRP_BP",
+    "EventCode": "0x0000036",
+    "BriefDescription": "Breakpoint"
+  },
+  {
+    "EventName": "TRP_LAM",
+    "EventCode": "0x0000046",
+    "BriefDescription": "Load address misaligned"
+  },
+  {
+    "EventName": "TRP_LAF",
+    "EventCode": "0x0000056",
+    "BriefDescription": "Load access fault"
+  },
+  {
+    "EventName": "TRP_SAM",
+    "EventCode": "0x0000066",
+    "BriefDescription": "Store/AMO address misaligned"
+  },
+  {
+    "EventName": "TRP_SAF",
+    "EventCode": "0x0000076",
+    "BriefDescription": "Store/AMO access fault"
+  },
+  {
+    "EventName": "TRP_UECALL",
+    "EventCode": "0x0000086",
+    "BriefDescription": "Environment call from U-mode"
+  },
+  {
+    "EventName": "TRP_SECALL",
+    "EventCode": "0x0000096",
+    "BriefDescription": "Environment call from S-mode"
+  },
+  {
+    "EventName": "TRP_MECALL",
+    "EventCode": "0x00000b6",
+    "BriefDescription": "Environment call from M-mode"
+  },
+  {
+    "EventName": "TRP_IPF",
+    "EventCode": "0x00000c6",
+    "BriefDescription": "Instruction page fault"
+  },
+  {
+    "EventName": "TRP_LPF",
+    "EventCode": "0x00000d6",
+    "BriefDescription": "Load Page Fault"
+  },
+  {
+    "EventName": "TRP_SPF",
+    "EventCode": "0x00000f6",
+    "BriefDescription": "Store/AMO Page Fault"
+  }
+]
