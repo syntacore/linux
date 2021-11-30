@@ -191,3 +191,7 @@ rv32_defconfig:
 PHONY += rv32_nommu_virt_defconfig
 rv32_nommu_virt_defconfig:
 	$(Q)$(MAKE) -f $(srctree)/Makefile nommu_virt_defconfig 32-bit.config
+
+PHONY += scr_rv32_l2_nommu_defconfig
+scr_rv32_l2_nommu_defconfig:
+	$(Q)$(MAKE) -f $(srctree)/Makefile scr_rv64_l2_nommu_defconfig 32-bit.config
