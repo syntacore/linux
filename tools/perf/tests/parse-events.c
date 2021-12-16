@@ -1540,6 +1540,19 @@ static int test__exclusive_group(struct evlist *evlist)
 	}
 	return TEST_OK;
 }
+
+static int test__checkevent_exclude_machine_modifier(struct evlist *evlist)
+{
+	struct evsel *evsel = evlist__first(evlist);
+
+	TEST_ASSERT_VAL("wrong exclude_user", evsel->core.attr.exclude_user);
+	TEST_ASSERT_VAL("wrong exclude_kernel", evsel->core.attr.exclude_kernel);
+	TEST_ASSERT_VAL("wrong exclude_machine", !evsel->core.attr.exclude_machine);
+	TEST_ASSERT_VAL("wrong exclude_hv", evsel->core.attr.exclude_hv);
+
+	return test__checkevent_symbolic_name(evlist);
+}
+
 static int test__checkevent_breakpoint_len(struct evlist *evlist)
 {
 	struct evsel *evsel = evlist__first(evlist);
@@ -2165,6 +2178,11 @@ static const struct evlist_test test__events[] = {
 		.name  = "mem:0/1/name=breakpoint1/,mem:0/4:rw/name=breakpoint2/",
 		.check = test__checkevent_breakpoint_2_events,
 		/* 3 */
+	},
+	{
+		.name  = "instructions:m",
+		.check = test__checkevent_exclude_machine_modifier,
+		/* 8 */
 	},
 };
 
