@@ -482,7 +482,7 @@ EXPORT_SYMBOL(scr_dma_platform_map_ops);
 
 #ifdef CONFIG_PCI
 
-#define PCI_BUS_BASE_ADDR 0x1000000000
+#define PCI_BUS_BASE_ADDR 0
 #define CPU_ADDR_TO_PCI_BUS_ADDR(x) ((dma_addr_t)(x) + PCI_BUS_BASE_ADDR)
 #define PCI_BUS_ADDR_TO_CPU_ADDR(x) ((phys_addr_t)((dma_addr_t)(x) - PCI_BUS_BASE_ADDR))
 
