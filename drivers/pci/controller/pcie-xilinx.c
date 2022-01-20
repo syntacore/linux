@@ -340,9 +340,8 @@ static const struct irq_domain_ops intx_domain_ops = {
  *
  * Return: IRQ_HANDLED on success and IRQ_NONE on failure
  */
-static irqreturn_t xilinx_pcie_intr_handler(int irq, void *data)
+static irqreturn_t _xilinx_pcie_intr_handler(struct xilinx_pcie_port *port, int irq)
 {
-	struct xilinx_pcie_port *port = (struct xilinx_pcie_port *)data;
 	struct device *dev = port->dev;
 	u32 val, mask, status;
 
@@ -385,32 +384,34 @@ static irqreturn_t xilinx_pcie_intr_handler(int irq, void *data)
 	}
 
 	if (status & (XILINX_PCIE_INTR_INTX | XILINX_PCIE_INTR_MSI)) {
-		struct irq_domain *domain;
+		int i = 128;
 
-		val = pcie_read(port, XILINX_PCIE_REG_RPIFR1);
+		while (--i) {
+			struct irq_domain *domain;
 
-		/* Check whether interrupt valid */
-		if (!(val & XILINX_PCIE_RPIFR1_INTR_VALID)) {
-			dev_warn(dev, "RP Intr FIFO1 read error\n");
-			goto error;
+			val = pcie_read(port, XILINX_PCIE_REG_RPIFR1);
+
+			/* Check whether interrupt valid */
+			if (!(val & XILINX_PCIE_RPIFR1_INTR_VALID))
+				break;
+
+			/* Decode the IRQ number */
+			if (val & XILINX_PCIE_RPIFR1_MSI_INTR) {
+				val = pcie_read(port, XILINX_PCIE_REG_RPIFR2) &
+					XILINX_PCIE_RPIFR2_MSG_DATA;
+				domain = port->msi_domain->parent;
+			} else {
+				val = (val & XILINX_PCIE_RPIFR1_INTR_MASK) >>
+					XILINX_PCIE_RPIFR1_INTR_SHIFT;
+				domain = port->leg_domain;
+			}
+
+			/* Clear interrupt FIFO register 1 */
+			pcie_write(port, XILINX_PCIE_RPIFR1_ALL_MASK,
+				   XILINX_PCIE_REG_RPIFR1);
+
+			generic_handle_domain_irq(domain, val);
 		}
-
-		/* Decode the IRQ number */
-		if (val & XILINX_PCIE_RPIFR1_MSI_INTR) {
-			val = pcie_read(port, XILINX_PCIE_REG_RPIFR2) &
-				XILINX_PCIE_RPIFR2_MSG_DATA;
-			domain = port->msi_domain->parent;
-		} else {
-			val = (val & XILINX_PCIE_RPIFR1_INTR_MASK) >>
-				XILINX_PCIE_RPIFR1_INTR_SHIFT;
-			domain = port->leg_domain;
-		}
-
-		/* Clear interrupt FIFO register 1 */
-		pcie_write(port, XILINX_PCIE_RPIFR1_ALL_MASK,
-			   XILINX_PCIE_REG_RPIFR1);
-
-		generic_handle_domain_irq(domain, val);
 	}
 
 	if (status & XILINX_PCIE_INTR_SLV_UNSUPP)
@@ -440,9 +441,20 @@ static irqreturn_t xilinx_pcie_intr_handler(int irq, void *data)
 	if (status & XILINX_PCIE_INTR_MST_ERRP)
 		dev_warn(dev, "Master error poison\n");
 
-error:
 	/* Clear the Interrupt Decode register */
 	pcie_write(port, status, XILINX_PCIE_REG_IDR);
+
+	return IRQ_HANDLED;
+}
+
+static irqreturn_t xilinx_pcie_intr_handler(int irq, void *data)
+{
+	struct xilinx_pcie_port *port = (struct xilinx_pcie_port *)data;
+	irqreturn_t ret;
+
+	do {
+		ret = _xilinx_pcie_intr_handler(port, irq);
+	} while (ret != IRQ_NONE);
 
 	return IRQ_HANDLED;
 }

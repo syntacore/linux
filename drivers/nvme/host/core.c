@@ -29,12 +29,12 @@
 
 #define NVME_MINORS		(1U << MINORBITS)
 
-unsigned int admin_timeout = 60;
+unsigned int admin_timeout = 5;
 module_param(admin_timeout, uint, 0644);
 MODULE_PARM_DESC(admin_timeout, "timeout in seconds for admin commands");
 EXPORT_SYMBOL_GPL(admin_timeout);
 
-unsigned int nvme_io_timeout = 30;
+unsigned int nvme_io_timeout = 5;
 module_param_named(io_timeout, nvme_io_timeout, uint, 0644);
 MODULE_PARM_DESC(io_timeout, "timeout in seconds for I/O");
 EXPORT_SYMBOL_GPL(nvme_io_timeout);
