@@ -47,6 +47,9 @@
 #define ENABLE_BASE			0x2000
 #define     ENABLE_PER_HART		0x80
 
+#define PENDING_BASE			0x1000
+#define MODE_BASE			0x1f0000
+
 /*
  * Each hart context has a set of control registers associated with it.  Right
  * now there's only two: a source priority threshold over which the hart will
@@ -76,6 +79,7 @@ struct plic_handler {
 	raw_spinlock_t		enable_lock;
 	void __iomem		*enable_base;
 	struct plic_priv	*priv;
+	int			ctxid;
 };
 static int plic_parent_irq __ro_after_init;
 static bool plic_cpuhp_setup_done __ro_after_init;
@@ -86,13 +90,20 @@ static inline void plic_toggle(struct plic_handler *handler,
 {
 	u32 __iomem *reg = handler->enable_base + (hwirq / 32) * sizeof(u32);
 	u32 hwirq_mask = 1 << (hwirq % 32);
+	u32 old_reg, new_reg, check_reg;
 
 	raw_spin_lock(&handler->enable_lock);
+	old_reg = readl(reg);
 	if (enable)
-		writel(readl(reg) | hwirq_mask, reg);
+		new_reg = old_reg | hwirq_mask;
 	else
-		writel(readl(reg) & ~hwirq_mask, reg);
+		new_reg = old_reg & ~hwirq_mask;
+	writel(new_reg, reg);
+	check_reg = readl(reg);
 	raw_spin_unlock(&handler->enable_lock);
+	pr_debug("%s(%d): hwirq %d: %s: %x -> %x -> %x\n",
+		 __func__, handler->ctxid, hwirq, enable ? "enable" : "disable",
+		 old_reg, new_reg, check_reg);
 }
 
 static inline void plic_irq_toggle(const struct cpumask *mask,
@@ -100,8 +111,13 @@ static inline void plic_irq_toggle(const struct cpumask *mask,
 {
 	int cpu;
 	struct plic_priv *priv = irq_data_get_irq_chip_data(d);
+	u32 mode = enable ? 1 : 0;
+
+	pr_debug("%s: hwirq %lu: %s, mode %d\n",
+		 __func__, d->hwirq, enable ? "enable" : "disable", mode);
 
 	writel(enable, priv->regs + PRIORITY_BASE + d->hwirq * PRIORITY_PER_ID);
+	writel(mode, priv->regs + MODE_BASE + d->hwirq * PRIORITY_PER_ID);
 	for_each_cpu(cpu, mask) {
 		struct plic_handler *handler = per_cpu_ptr(&plic_handlers, cpu);
 
@@ -367,9 +383,18 @@ static int __init plic_init(struct device_node *node,
 		handler->enable_base =
 			priv->regs + ENABLE_BASE + i * ENABLE_PER_HART;
 		handler->priv = priv;
+		handler->ctxid = hartid;
+
 done:
-		for (hwirq = 1; hwirq <= nr_irqs; hwirq++)
+		plic_set_threshold(handler, 1);
+		for (hwirq = 1; hwirq <= nr_irqs; hwirq++) {
+			plic_toggle(handler, hwirq, 1);
+			writel(hwirq, handler->hart_base + CONTEXT_CLAIM);
 			plic_toggle(handler, hwirq, 0);
+			writel(0, priv->regs + PRIORITY_BASE + hwirq * PRIORITY_PER_ID);
+			writel(0, priv->regs + MODE_BASE + hwirq * 4);
+		}
+		plic_set_threshold(handler, 0);
 		nr_handlers++;
 	}
 
