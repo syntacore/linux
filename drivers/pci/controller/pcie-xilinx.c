@@ -271,7 +271,8 @@ static const struct irq_domain_ops xilinx_msi_domain_ops = {
 };
 
 static struct msi_domain_info xilinx_msi_info = {
-	.flags	= (MSI_FLAG_USE_DEF_DOM_OPS | MSI_FLAG_USE_DEF_CHIP_OPS),
+	.flags	= (MSI_FLAG_USE_DEF_DOM_OPS | MSI_FLAG_USE_DEF_CHIP_OPS |
+		   MSI_FLAG_MULTI_PCI_MSI | MSI_FLAG_PCI_MSIX),
 	.chip	= &xilinx_msi_top_chip,
 };
 
