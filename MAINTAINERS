@@ -18148,6 +18148,12 @@ L:	linux-mmc@vger.kernel.org
 S:	Maintained
 F:	drivers/mmc/host/sdhci-pci-dwc-mshc.c
 
+SYNTACORE SCR L2 CACHE PMU DRIVER
+M:	Nikita Shubin <n.shubin@yadro.com>
+S:	Maintained
+F:	Documentation/admin-guide/perf/scr_l2_pmu.rst
+F:	drivers/perf/scr_l2_pmu.c
+
 SYSTEM CONFIGURATION (SYSCON)
 M:	Lee Jones <lee.jones@linaro.org>
 M:	Arnd Bergmann <arnd@arndb.de>
