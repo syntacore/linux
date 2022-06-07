@@ -86,6 +86,14 @@ config RISCV_PMU_SBI
 	  full perf feature support i.e. counter overflow, privilege mode
 	  filtering, counter configuration.
 
+config RISCV_PMU_SCR_L2_SBI
+	depends on RISCV_SBI
+	bool "RISC-V Syntacore SCR L2 PMU based on SBI VENDOR extension"
+	default n
+	help
+	  Say y if you want to use the SCR L2 SoC performance monitor
+	  using SBI VENDOR extension.
+
 config ARM_PMU_ACPI
 	depends on ARM_PMU && ACPI
 	def_bool y
