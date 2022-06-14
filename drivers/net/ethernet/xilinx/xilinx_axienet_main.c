@@ -504,16 +504,33 @@ static int __axienet_device_reset(struct axienet_local *lp)
 	 * process of Axi DMA takes a while to complete as all pending
 	 * commands/transfers will be flushed or completed during this
 	 * reset process.
-	 * Note that even though both TX and RX have their own reset register,
-	 * they both reset the entire DMA core, so only one needs to be used.
 	 */
+
+	value = axienet_dma_in32(lp, XAXIDMA_TX_CR_OFFSET);
+	value &= ~XAXIDMA_CR_RUNSTOP_MASK;
+	axienet_dma_out32(lp, XAXIDMA_TX_CR_OFFSET, value);
+
 	axienet_dma_out32(lp, XAXIDMA_TX_CR_OFFSET, XAXIDMA_CR_RESET_MASK);
 	ret = read_poll_timeout(axienet_dma_in32, value,
 				!(value & XAXIDMA_CR_RESET_MASK),
 				DELAY_OF_ONE_MILLISEC, 50000, false, lp,
 				XAXIDMA_TX_CR_OFFSET);
 	if (ret) {
-		dev_err(lp->dev, "%s: DMA reset timeout!\n", __func__);
+		dev_err(lp->dev, "%s: Tx DMA reset timeout!\n", __func__);
+		return ret;
+	}
+
+	value = axienet_dma_in32(lp, XAXIDMA_RX_CR_OFFSET);
+	value &= ~XAXIDMA_CR_RUNSTOP_MASK;
+	axienet_dma_out32(lp, XAXIDMA_RX_CR_OFFSET, value);
+
+	axienet_dma_out32(lp, XAXIDMA_RX_CR_OFFSET, XAXIDMA_CR_RESET_MASK);
+	ret = read_poll_timeout(axienet_dma_in32, value,
+				!(value & XAXIDMA_CR_RESET_MASK),
+				DELAY_OF_ONE_MILLISEC, 50000, false, lp,
+				XAXIDMA_RX_CR_OFFSET);
+	if (ret) {
+		dev_err(lp->dev, "%s: Rx DMA reset timeout!\n", __func__);
 		return ret;
 	}
 
@@ -2075,6 +2092,11 @@ static int axienet_probe(struct platform_device *pdev)
 		goto cleanup_clk;
 	}
 
+	/* Reset core now that clocks are enabled, prior to accessing MDIO */
+	ret = __axienet_device_reset(lp);
+	if (ret)
+		goto cleanup_clk;
+
 	/* Autodetect the need for 64-bit DMA pointers.
 	 * When the IP is configured for a bus width bigger than 32 bits,
 	 * writing the MSB registers is mandatory, even if they are all 0.
@@ -2121,11 +2143,6 @@ static int axienet_probe(struct platform_device *pdev)
 
 	lp->coalesce_count_rx = XAXIDMA_DFT_RX_THRESHOLD;
 	lp->coalesce_count_tx = XAXIDMA_DFT_TX_THRESHOLD;
-
-	/* Reset core now that clocks are enabled, prior to accessing MDIO */
-	ret = __axienet_device_reset(lp);
-	if (ret)
-		goto cleanup_clk;
 
 	ret = axienet_mdio_setup(lp);
 	if (ret)
