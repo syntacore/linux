@@ -567,11 +567,15 @@ static int __init __plic_init(struct device_node *node,
 		if (!handler->enable_save)
 			goto out_free_enable_reg;
 done:
+		plic_set_threshold(handler, 1);
 		for (hwirq = 1; hwirq <= nr_irqs; hwirq++) {
+			plic_toggle(handler, hwirq, 1);
+			writel(hwirq, handler->hart_base + CONTEXT_CLAIM);
 			plic_toggle(handler, hwirq, 0);
 			writel(1, priv->regs + PRIORITY_BASE +
 				  hwirq * PRIORITY_PER_ID);
 		}
+		plic_set_threshold(handler, 0);
 		nr_handlers++;
 	}
 
