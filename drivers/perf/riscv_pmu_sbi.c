@@ -268,6 +268,10 @@ static int pmu_sbi_ctr_get_idx(struct perf_event *event)
 	uint64_t cmask = GENMASK_ULL(rvpmu->num_counters - 1, 0);
 	unsigned long cflags = 0;
 
+	if (event->attr.exclude_machine)
+		cflags |= SBI_PMU_CFG_FLAG_SET_MINH;
+	if (event->attr.exclude_hv)
+		cflags |= (SBI_PMU_CFG_FLAG_SET_VUINH | SBI_PMU_CFG_FLAG_SET_VSNH);
 	if (event->attr.exclude_kernel)
 		cflags |= SBI_PMU_CFG_FLAG_SET_SINH;
 	if (event->attr.exclude_user)
