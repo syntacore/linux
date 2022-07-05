@@ -19,6 +19,7 @@ typedef struct {
 #ifdef CONFIG_SMP
 	/* A local icache flush is needed before user execution can resume. */
 	cpumask_t icache_stale_mask;
+	cpumask_t tlb_stale_mask;
 #endif
 } mm_context_t;
 
