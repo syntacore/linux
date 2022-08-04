@@ -15,6 +15,7 @@
 #include <linux/tick.h>
 #include <linux/ptrace.h>
 #include <linux/uaccess.h>
+#include <linux/hw_breakpoint.h>
 
 #include <asm/unistd.h>
 #include <asm/processor.h>
@@ -154,6 +155,7 @@ void flush_thread(void)
 	kfree(current->thread.vstate.datap);
 	memset(&current->thread.vstate, 0, sizeof(struct __riscv_v_ext_state));
 #endif
+	flush_ptrace_hw_breakpoint(current);
 }
 
 void arch_release_task_struct(struct task_struct *tsk)
@@ -205,5 +207,6 @@ int copy_thread(struct task_struct *p, const struct kernel_clone_args *args)
 	}
 	p->thread.ra = (unsigned long)ret_from_fork;
 	p->thread.sp = (unsigned long)childregs; /* kernel sp */
+	clear_ptrace_hw_breakpoint(p);
 	return 0;
 }

@@ -15,3 +15,11 @@
 #
 #MVENDORID-MARCHID-MIMPID,Version,Filename,EventType
 0x489-0x8000000000000007-0x[[:xdigit:]]+,v1,sifive/u74,core
+0x6bb-0x[[:xdigit:]]{12}7[[:xdigit:]]{3}-0x[[:xdigit:]]+,v1,syntacore/scr7,core
+0x6bb-0x[[:xdigit:]]{12}9[[:xdigit:]]{3}-0x[[:xdigit:]]{8},v1,syntacore/scr9/v1,core
+0x6bb-0x[[:xdigit:]]{12}9[[:xdigit:]]{3}-0x1[[:xdigit:]]{8},v1,syntacore/scr9/heavy,core
+0x6bb-0x[[:xdigit:]]{12}9[[:xdigit:]]{3}-0x2[[:xdigit:]]{8},v1,syntacore/scr9/lite,core
+# Syntacore QEMU latest
+0x6bb-0x[[:xdigit:]]{12}9[[:xdigit:]]{3}-0x[[:xdigit:]]{2},v1,syntacore/scr9/v1,core
+# Syntacore QEMU old releases
+0x6bb-0x[[:xdigit:]]{12}9[[:xdigit:]]{3}-0x8000000013009107,v1,syntacore/scr9/v1,core

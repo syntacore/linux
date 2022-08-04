@@ -12,6 +12,7 @@
 #include <linux/version.h>
 #include <asm/sbi.h>
 #include <asm/kvm_vcpu_sbi.h>
+#include <asm/kvm_vm_plf.h>
 
 static int kvm_sbi_ext_base_handler(struct kvm_vcpu *vcpu, struct kvm_run *run,
 				    struct kvm_vcpu_sbi_return *retdata)
@@ -85,6 +86,32 @@ static int kvm_sbi_ext_forward_handler(struct kvm_vcpu *vcpu,
 	return 0;
 }
 
+static int kvm_sbi_ext_vendor_handler(struct kvm_vcpu *vcpu,
+				       struct kvm_run *run,
+				       struct kvm_vcpu_sbi_return *retdata)
+{
+	struct kvm_cpu_context *cp = &vcpu->arch.guest_context;
+	unsigned long vendor_ext_id = cp->a7;
+	int ret;
+
+	if ((vendor_ext_id - SBI_EXT_VENDOR_START) == kvm_to_plf(vcpu->kvm)->vendor_id &&
+						kvm_to_plf(vcpu->kvm)->handler)
+		ret = kvm_to_plf(vcpu->kvm)->handler(vcpu, run, retdata);
+	else
+		ret = kvm_sbi_ext_forward_handler(vcpu, run, retdata);
+
+	return ret;
+}
+static unsigned long kvm_sbi_ext_vendor_probe(struct kvm_vcpu *vcpu)
+{
+	unsigned long ret = 0;
+
+	if (kvm_to_plf(vcpu->kvm)->probe)
+		ret = kvm_to_plf(vcpu->kvm)->probe(vcpu);
+
+	return ret;
+}
+
 const struct kvm_vcpu_sbi_extension vcpu_sbi_ext_experimental = {
 	.extid_start = SBI_EXT_EXPERIMENTAL_START,
 	.extid_end = SBI_EXT_EXPERIMENTAL_END,
@@ -94,5 +121,6 @@ const struct kvm_vcpu_sbi_extension vcpu_sbi_ext_experimental = {
 const struct kvm_vcpu_sbi_extension vcpu_sbi_ext_vendor = {
 	.extid_start = SBI_EXT_VENDOR_START,
 	.extid_end = SBI_EXT_VENDOR_END,
-	.handler = kvm_sbi_ext_forward_handler,
+	.handler = kvm_sbi_ext_vendor_handler,
+	.probe = kvm_sbi_ext_vendor_probe,
 };

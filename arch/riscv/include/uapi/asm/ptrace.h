@@ -127,6 +127,15 @@ struct __riscv_v_regset_state {
  */
 #define RISCV_MAX_VLENB (8192)
 
+struct user_hwdebug_state {
+	__u64     dbg_info;
+	struct {
+		__u64 addr;
+		__u64 type;
+		__u64 len;
+	}       dbg_regs[16];
+};
+
 #endif /* __ASSEMBLY__ */
 
 #endif /* _UAPI_ASM_RISCV_PTRACE_H */

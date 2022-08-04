@@ -16,6 +16,30 @@ choice
 	 environment leading to NR_CPUS * HZ number of timer interrupts
 	 per second.
 
+	config HZ_2
+		bool "2 HZ"
+	help
+	  2 Hz is an experimental choice for FPGA.
+
+	config HZ_4
+		bool "4 HZ"
+	help
+	  4 Hz is an experimental choice for FPGA.
+
+	config HZ_8
+		bool "8 HZ"
+	help
+	  8 Hz is an experimental choice for FPGA.
+
+	config HZ_12
+		bool "12 HZ"
+	help
+	  12 Hz is an experimental choice for FPGA.
+
+	config HZ_25
+		bool "25 HZ"
+	help
+	  25 Hz is an experimental choice for FPGA.
 
 	config HZ_100
 		bool "100 HZ"
@@ -50,6 +74,11 @@ endchoice
 
 config HZ
 	int
+	default 2 if HZ_2
+	default 4 if HZ_4
+	default 8 if HZ_8
+	default 12 if HZ_12
+	default 25 if HZ_25
 	default 100 if HZ_100
 	default 250 if HZ_250
 	default 300 if HZ_300

@@ -21,6 +21,7 @@
 #include <asm/kvm_vcpu_sbi.h>
 #include <asm/kvm_vcpu_timer.h>
 #include <asm/kvm_vcpu_pmu.h>
+#include <asm/kvm_vm_plf.h>
 
 #define KVM_MAX_VCPUS			1024
 
@@ -101,6 +102,9 @@ struct kvm_arch {
 
 	/* AIA Guest/VM context */
 	struct kvm_aia aia;
+
+	/* VM platform specific */
+	struct kvm_riscv_plf plf;
 };
 
 struct kvm_cpu_trap {
@@ -244,6 +248,9 @@ struct kvm_vcpu_arch {
 
 	/* Performance monitoring context */
 	struct kvm_pmu pmu_context;
+
+	/* VCPU platform specific */
+	void *plf;
 };
 
 static inline void kvm_arch_sync_events(struct kvm *kvm) {}

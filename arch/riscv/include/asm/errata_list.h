@@ -29,6 +29,11 @@
 #define	ERRATA_THEAD_NUMBER 3
 #endif
 
+#ifdef CONFIG_ERRATA_SCR
+#define	ERRATA_SCR_CMO 0
+#define	ERRATA_SCR_NUMBER 1
+#endif
+
 #ifdef __ASSEMBLY__
 
 #define ALT_INSN_FAULT(x)						\
@@ -122,8 +127,21 @@ asm volatile(ALTERNATIVE(						\
 #define THEAD_flush_A0	".long 0x0275000b"
 #define THEAD_SYNC_S	".long 0x0190000b"
 
+/*
+ * scr.clfush
+ * | 31 - 25 | 24 - 20 | 19 - 15 | 14 - 12 | 11 - 7 | 6 - 0 |
+ *   0001000    01001      rs1       000      00000  1110011
+ *
+ * scr.clinv
+ * | 31 - 25 | 24 - 20 | 19 - 15 | 14 - 12 | 11 - 7 | 6 - 0 |
+ *   0001000    01000      rs1       000      00000  1110011
+ */
+#define SCR_inval	".long 0x10850073"
+#define SCR_flush	".long 0x10950073"
+#define SCR_clean	SCR_flush
+
 #define ALT_CMO_OP(_op, _start, _size, _cachesize)			\
-asm volatile(ALTERNATIVE_2(						\
+asm volatile(ALTERNATIVE_3(						\
 	__nops(6),							\
 	"mv a0, %1\n\t"							\
 	"j 2f\n\t"							\
@@ -133,6 +151,7 @@ asm volatile(ALTERNATIVE_2(						\
 	"2:\n\t"							\
 	"bltu a0, %2, 3b\n\t"						\
 	"nop", 0, RISCV_ISA_EXT_ZICBOM, CONFIG_RISCV_ISA_ZICBOM,	\
+									\
 	"mv a0, %1\n\t"							\
 	"j 2f\n\t"							\
 	"3:\n\t"							\
@@ -141,7 +160,18 @@ asm volatile(ALTERNATIVE_2(						\
 	"2:\n\t"							\
 	"bltu a0, %2, 3b\n\t"						\
 	THEAD_SYNC_S, THEAD_VENDOR_ID,					\
-			ERRATA_THEAD_CMO, CONFIG_ERRATA_THEAD_CMO)	\
+			ERRATA_THEAD_CMO, CONFIG_ERRATA_THEAD_CMO,	\
+									\
+	"mv a0, %1\n\t"							\
+	"j 2f\n\t"							\
+	"3:\n\t"							\
+	SCR_##_op "\n\t"						\
+	"add a0, a0, %0\n\t"						\
+	"2:\n\t"							\
+	"bltu a0, %2, 3b\n\t"						\
+	"nop",								\
+	SCR_VENDOR_ID, ERRATA_SCR_CMO, CONFIG_ERRATA_SCR_CMO)		\
+									\
 	: : "r"(_cachesize),						\
 	    "r"((unsigned long)(_start) & ~((_cachesize) - 1UL)),	\
 	    "r"((unsigned long)(_start) + (_size))			\

@@ -1,0 +1,26 @@
+[
+    {
+      "EventName": "PREF_REQ",
+      "EventCode": "0x000000c",
+      "BriefDescription": "Prefetcher access",
+      "Unit": "scr7"
+    },
+    {
+      "EventName": "PREF_HIT",
+      "EventCode": "0x000001c",
+      "BriefDescription": "Prefetcher hit (Prefetcher buffer hit)",
+      "Unit": "scr7"
+    },
+    {
+      "EventName": "PREF_HPW_REQ",
+      "EventCode": "0x000002c",
+      "BriefDescription": "Prefetcher request to HPW",
+      "Unit": "scr7"
+    },
+    {
+      "EventName": "PREF_LATE_REQ",
+      "EventCode": "0x000003c",
+      "BriefDescription": "Prefetcher late request",
+      "Unit": "scr7"
+    }
+]

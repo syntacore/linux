@@ -123,7 +123,8 @@ int sk_stream_wait_memory(struct sock *sk, long *timeo_p)
 	DEFINE_WAIT_FUNC(wait, woken_wake_function);
 
 	if (sk_stream_memory_free(sk))
-		current_timeo = vm_wait = get_random_u32_below(HZ / 5) + 2;
+		current_timeo = vm_wait =
+			get_random_u32_below(max(HZ / 5, 1)) + 2;
 
 	add_wait_queue(sk_sleep(sk), &wait);
 

@@ -3,7 +3,7 @@
 # Makefile for RISC-V KVM support
 #
 
-ccflags-y += -I $(srctree)/$(src)
+ccflags-y += -I $(srctree)/$(src) -I $(srctree)/drivers/perf
 
 include $(srctree)/virt/kvm/Makefile.kvm
 
@@ -11,6 +11,7 @@ obj-$(CONFIG_KVM) += kvm.o
 
 kvm-y += main.o
 kvm-y += vm.o
+kvm-y += vm_plf.o
 kvm-y += vmid.o
 kvm-y += tlb.o
 kvm-y += mmu.o
@@ -28,6 +29,8 @@ kvm-y += vcpu_sbi_replace.o
 kvm-y += vcpu_sbi_hsm.o
 kvm-y += vcpu_timer.o
 kvm-$(CONFIG_RISCV_PMU_SBI) += vcpu_pmu.o vcpu_sbi_pmu.o
+kvm-$(CONFIG_SOC_SCR) += vcpu_sbi_scr.o
+kvm-$(CONFIG_RISCV_PMU_SCR_CORE) += vcpu_scr_pmu.o
 kvm-y += aia.o
 kvm-y += aia_device.o
 kvm-y += aia_aplic.o

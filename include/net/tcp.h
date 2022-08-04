@@ -130,7 +130,6 @@ void tcp_time_wait(struct sock *sk, int state, int timeo);
 				  */
 #define TCP_FIN_TIMEOUT_MAX (120 * HZ) /* max TCP_LINGER2 value (two minutes) */
 
-#define TCP_DELACK_MAX	((unsigned)(HZ/5))	/* maximal time to delay before sending an ACK */
 #if HZ >= 100
 #define TCP_DELACK_MIN	((unsigned)(HZ/25))	/* minimal time to delay before sending an ACK */
 #define TCP_ATO_MIN	((unsigned)(HZ/25))
@@ -139,7 +138,13 @@ void tcp_time_wait(struct sock *sk, int state, int timeo);
 #define TCP_ATO_MIN	4U
 #endif
 #define TCP_RTO_MAX	((unsigned)(120*HZ))
+#if HZ > 10
 #define TCP_RTO_MIN	((unsigned)(HZ/5))
+#define TCP_DELACK_MAX	((unsigned)(HZ/5))	/* maximal time to delay before sending an ACK */
+#else
+#define TCP_RTO_MIN	((unsigned)(HZ))
+#define TCP_DELACK_MAX	((unsigned)(HZ))	/* maximal time to delay before sending an ACK */
+#endif
 #define TCP_TIMEOUT_MIN	(2U) /* Min timeout for TCP timers in jiffies */
 
 #define TCP_TIMEOUT_MIN_US (2*USEC_PER_MSEC) /* Min TCP timeout in microsecs */

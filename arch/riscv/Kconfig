@@ -121,12 +121,14 @@ config RISCV
 	select HAVE_FUNCTION_ERROR_INJECTION
 	select HAVE_GCC_PLUGINS
 	select HAVE_GENERIC_VDSO if MMU && 64BIT
+	select HAVE_HW_BREAKPOINT if !RISCV_M_MODE && PERF_EVENTS
 	select HAVE_IRQ_TIME_ACCOUNTING
 	select HAVE_KPROBES if !XIP_KERNEL
 	select HAVE_KPROBES_ON_FTRACE if !XIP_KERNEL
 	select HAVE_KRETPROBES if !XIP_KERNEL
 	# https://github.com/ClangBuiltLinux/linux/issues/1881
 	select HAVE_LD_DEAD_CODE_DATA_ELIMINATION if !LD_IS_LLD
+	select HAVE_MIXED_BREAKPOINTS_REGS if HAVE_HW_BREAKPOINT
 	select HAVE_MOVE_PMD
 	select HAVE_MOVE_PUD
 	select HAVE_PCI
@@ -210,6 +212,7 @@ config MMU
 
 config PAGE_OFFSET
 	hex
+	default PHYS_RAM_BASE if !MMU && PHYS_RAM_BASE_FIXED
 	default 0xC0000000 if 32BIT && MMU
 	default 0x80000000 if !MMU
 	default 0xff60000000000000 if 64BIT
@@ -635,6 +638,45 @@ config THREAD_SIZE_ORDER
 	  Specify the Pages of thread stack size (from 4KB to 64KB), which also
 	  affects irq stack size, which is equal to thread stack size.
 
+config RISCV_MISALIGNED
+	bool
+	help
+	  Embed support for emulating misaligned loads and stores.
+
+choice
+	prompt "Unaligned Accesses Support"
+	default RISCV_PROBE_UNALIGNED_ACCESS
+	help
+	  This determines the level of support for unaligned accesses. This
+	  information is used by the kernel to perform optimizations. It is also
+	  exposed to user space via the hwprobe syscall. The hardware will be
+	  probed at boot by default.
+
+config RISCV_PROBE_UNALIGNED_ACCESS
+	bool "Probe for hardware unaligned access support"
+	select RISCV_MISALIGNED
+	help
+	  During boot, the kernel will run a series of tests to determine the
+	  speed of unaligned accesses. This probing will dynamically determine
+	  the speed of unaligned accesses on the underlying system. If unaligned
+	  memory accesses trap into the kernel as they are not supported by the
+	  system, the kernel will emulate the unaligned accesses to preserve the
+	  UABI.
+
+config RISCV_SLOW_UNALIGNED_ACCESS
+	bool "Assume the system supports slow unaligned memory accesses"
+	select RISCV_MISALIGNED
+	help
+	  Assume that the system supports slow unaligned memory accesses.
+
+config RISCV_FAST_UNALIGNED_ACCESS
+	bool "Assume the system supports fast unaligned memory accesses"
+	select RISCV_MISALIGNED
+	help
+	  Assume that the system supports fast unaligned memory accesses.
+
+endchoice
+
 endmenu # "Platform type"
 
 menu "Kernel features"
@@ -882,6 +924,18 @@ config RISCV_ISA_FALLBACK
 	  Documentation/devicetree/bindings/riscv/extensions.yaml for details
 	  on the replacement properties, "riscv,isa-base" and
 	  "riscv,isa-extensions".
+
+config SKIP_PMP_SETUP
+	bool "Skip PMP setup on boot in M-mode" if COMPILE_TEST
+	depends on RISCV_M_MODE
+	default n
+	help
+	  Skip PMP setup when booting NOMMU Linux in M-mode. Memory protection
+	  depends on hardware. Some hardware platforms may provide additional
+	  PMP flags. Others may implement custom memory protection blocks. In
+	  such cases memory protection can be configured in the first stage
+	  bootloader. Use this flag to keep existing memory protection settings
+	  configured by the bootloader.
 
 endmenu # "Boot options"
 

@@ -1,0 +1,68 @@
+[
+    {
+      "EventName": "HPW_4K_HIT",
+      "EventCode": "0x000000a",
+      "BriefDescription": "HPW get PTE with page size 4K",
+      "Unit": "scr7"
+    },
+    {
+      "EventName": "HPW_MP_HIT",
+      "EventCode": "0x000001a",
+      "BriefDescription": "HPW get PTE with page size 2M",
+      "Unit": "scr7"
+    },
+    {
+      "EventName": "HPW_GP_HIT",
+      "EventCode": "0x000002a",
+      "BriefDescription": "HPW get PTE with page size 1G",
+      "Unit": "scr7"
+    },
+    {
+      "EventName": "HPW_ITLB_REQ",
+      "EventCode": "0x000003a",
+      "BriefDescription": "HPW get request from iTLB",
+      "Unit": "scr7"
+    },
+    {
+      "EventName": "HPW_DTLB_REQ",
+      "EventCode": "0x000004a",
+      "BriefDescription": "HPW get request from dTLB",
+      "Unit": "scr7"
+    },
+    {
+      "EventName": "HPW_PREF_REQ",
+      "EventCode": "0x000005a",
+      "BriefDescription": "HPW get request from page prefetcher",
+      "Unit": "scr7"
+    },
+    {
+      "EventName": "HPW_PAGE_FAULT",
+      "EventCode": "0x000006a",
+      "BriefDescription": "HPW get response with page fault error",
+      "Unit": "scr7"
+    },
+    {
+      "EventName": "HPW_ACCESS_FAULT",
+      "EventCode": "0x000007a",
+      "BriefDescription": "HPW get response with access fault error",
+      "Unit": "scr7"
+    },
+    {
+      "EventName": "HPW_NO_ERR",
+      "EventCode": "0x000008a",
+      "BriefDescription": "HPW get response withou errors",
+      "Unit": "scr7"
+    },
+    {
+      "EventName": "HPW_TP_HIT",
+      "EventCode": "0x000009a",
+      "BriefDescription": "HPW get PTE with page size 1T (SV57 only)",
+      "Unit": "scr7"
+    },
+    {
+      "EventName": "HPW_PP_HIT",
+      "EventCode": "0x00000aa",
+      "BriefDescription": "HPW get PTE with page size 1P (SV57 only)",
+      "Unit": "scr7"
+    }
+]

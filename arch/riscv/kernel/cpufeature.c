@@ -556,6 +556,7 @@ unsigned long riscv_get_elf_hwcap(void)
 	return hwcap;
 }
 
+#if defined(CONFIG_RISCV_PROBE_UNALIGNED_ACCESS)
 void check_unaligned_access(int cpu)
 {
 	u64 start_cycles, end_cycles;
@@ -648,6 +649,17 @@ void check_unaligned_access(int cpu)
 out:
 	__free_pages(page, get_order(MISALIGNED_BUFFER_SIZE));
 }
+#else
+void check_unaligned_access(int cpu)
+{
+	long speed = RISCV_HWPROBE_MISALIGNED_SLOW;
+
+	if (IS_ENABLED(CONFIG_RISCV_FAST_UNALIGNED_ACCESS))
+		speed = RISCV_HWPROBE_MISALIGNED_FAST;
+
+	per_cpu(misaligned_access_speed, cpu) = speed;
+}
+#endif
 
 static int check_unaligned_access_boot_cpu(void)
 {
