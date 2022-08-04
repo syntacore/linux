@@ -62,6 +62,9 @@
 #define	PLIC_ENABLE_THRESHOLD		0
 
 #define PLIC_QUIRK_EDGE_INTERRUPT	0
+#define PLIC_QUIRK_SCR_SET_MODE		1
+
+#define SCR_MODE_BASE			0x1f0000
 
 struct plic_priv {
 	struct cpumask lmask;
@@ -87,6 +90,43 @@ struct plic_handler {
 static int plic_parent_irq __ro_after_init;
 static bool plic_cpuhp_setup_done __ro_after_init;
 static DEFINE_PER_CPU(struct plic_handler, plic_handlers);
+
+static int plic_scr_irq_set_type(struct irq_data *d, unsigned int type)
+{
+	struct plic_priv *priv = irq_data_get_irq_chip_data(d);
+	static enum {
+		SCR_IRQ_TYPE_NONE		= 0,
+		SCR_IRQ_TYPE_LEVEL_HIGH		= 1,
+		SCR_IRQ_TYPE_LEVEL_LOW		= 2,
+		SCR_IRQ_TYPE_EDGE_RISING	= 3,
+		SCR_IRQ_TYPE_EDGE_FALLING	= 4,
+		SCR_IRQ_TYPE_EDGE_BOTH		= 5,
+	} value = SCR_IRQ_TYPE_NONE;
+
+	switch (type & IRQF_TRIGGER_MASK) {
+		case IRQ_TYPE_EDGE_BOTH:
+			value = SCR_IRQ_TYPE_EDGE_BOTH;
+			break;
+		case IRQ_TYPE_EDGE_FALLING:
+			value = SCR_IRQ_TYPE_EDGE_FALLING;
+			break;
+		case IRQ_TYPE_EDGE_RISING:
+			value = SCR_IRQ_TYPE_EDGE_RISING;
+			break;
+		case IRQ_TYPE_LEVEL_LOW:
+			value = SCR_IRQ_TYPE_LEVEL_LOW;
+			break;
+		case IRQ_TYPE_LEVEL_HIGH:
+			value = SCR_IRQ_TYPE_LEVEL_HIGH;
+			break;
+		default:
+			return -EINVAL;
+	}
+
+	writel(value, priv->regs + SCR_MODE_BASE + d->hwirq * PRIORITY_PER_ID);
+
+	return IRQ_SET_MASK_OK;
+}
 
 static int plic_irq_set_type(struct irq_data *d, unsigned int type);
 
@@ -214,6 +254,9 @@ static int plic_irq_set_type(struct irq_data *d, unsigned int type)
 {
 	struct plic_priv *priv = irq_data_get_irq_chip_data(d);
 
+	if (test_bit(PLIC_QUIRK_SCR_SET_MODE, &priv->plic_quirks))
+		return plic_scr_irq_set_type(d, type);
+
 	if (!test_bit(PLIC_QUIRK_EDGE_INTERRUPT, &priv->plic_quirks))
 		return IRQ_SET_MASK_OK_NOCOPY;
 
@@ -317,7 +360,8 @@ static int plic_irq_domain_translate(struct irq_domain *d,
 {
 	struct plic_priv *priv = d->host_data;
 
-	if (test_bit(PLIC_QUIRK_EDGE_INTERRUPT, &priv->plic_quirks))
+	if (test_bit(PLIC_QUIRK_EDGE_INTERRUPT, &priv->plic_quirks) ||
+	    test_bit(PLIC_QUIRK_SCR_SET_MODE, &priv->plic_quirks))
 		return irq_domain_translate_twocell(d, fwspec, hwirq, type);
 
 	return irq_domain_translate_onecell(d, fwspec, hwirq, type);
@@ -580,3 +624,10 @@ static int __init plic_edge_init(struct device_node *node,
 
 IRQCHIP_DECLARE(andestech_nceplic100, "andestech,nceplic100", plic_edge_init);
 IRQCHIP_DECLARE(thead_c900_plic, "thead,c900-plic", plic_edge_init);
+
+static int __init plic_scr_init(struct device_node *node,
+				struct device_node *parent)
+{
+	return __plic_init(node, parent, BIT(PLIC_QUIRK_SCR_SET_MODE));
+}
+IRQCHIP_DECLARE(syntacore_plic, "syntacore,plic", plic_scr_init);
