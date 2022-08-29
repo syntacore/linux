@@ -1852,6 +1852,17 @@ int pci_setup_device(struct pci_dev *dev)
 	/* "Unknown power state" */
 	dev->current_state = PCI_UNKNOWN;
 
+	{
+		u16 br;
+		pci_read_config_word(dev, PCI_BRIDGE_CONTROL, &br);
+		br |= PCI_BRIDGE_CTL_BUS_RESET;
+		pci_write_config_word(dev, PCI_BRIDGE_CONTROL, br);
+		msleep(100);
+		br &= ~PCI_BRIDGE_CTL_BUS_RESET;
+		pci_write_config_word(dev, PCI_BRIDGE_CONTROL, br);
+		msleep(100);
+	}
+
 	/* Early fixups, before probing the BARs */
 	pci_fixup_device(pci_fixup_early, dev);
 
