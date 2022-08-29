@@ -334,6 +334,8 @@ static unsigned long pmu_sbi_get_filter_flags(struct perf_event *event)
 		cflags |= SBI_PMU_CFG_FLAG_SET_UINH | SBI_PMU_CFG_FLAG_SET_SINH;
 	if (event->attr.exclude_guest)
 		cflags |= SBI_PMU_CFG_FLAG_SET_VSINH | SBI_PMU_CFG_FLAG_SET_VUINH;
+	if (event->attr.exclude_machine)
+		cflags |= SBI_PMU_CFG_FLAG_SET_MINH;
 
 	return cflags;
 }
