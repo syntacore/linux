@@ -11,6 +11,7 @@
 #include <vdso/processor.h>
 
 #include <asm/ptrace.h>
+#include <asm/hw_breakpoint.h>
 
 /*
  * This decides where the kernel will search for a free chunk of vm
@@ -29,6 +30,7 @@
 #ifndef __ASSEMBLY__
 
 struct task_struct;
+struct perf_event;
 struct pt_regs;
 
 /* CPU-specific state of a task */
@@ -39,6 +41,9 @@ struct thread_struct {
 	unsigned long s[12];	/* s[0]: frame pointer */
 	struct __riscv_d_ext_state fstate;
 	unsigned long bad_cause;
+#ifdef CONFIG_HAVE_HW_BREAKPOINT
+	struct perf_event *ptrace_bps[HBP_NUM_MAX];
+#endif
 };
 
 /* Whitelist the fstate from the task_struct for hardened usercopy */

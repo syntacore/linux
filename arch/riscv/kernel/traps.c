@@ -175,6 +175,11 @@ asmlinkage __visible __trap_section void do_trap_break(struct pt_regs *regs)
 	if (uprobe_breakpoint_handler(regs))
 		return;
 #endif
+#ifdef CONFIG_HAVE_HW_BREAKPOINT
+	if (notify_die(DIE_DEBUG, "EBREAK", regs, 0, regs->cause, SIGTRAP)
+						       == NOTIFY_STOP)
+		return;
+#endif
 	current->thread.bad_cause = regs->cause;
 
 	if (user_mode(regs))
