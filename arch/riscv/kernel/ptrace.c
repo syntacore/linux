@@ -18,6 +18,7 @@
 #include <linux/regset.h>
 #include <linux/sched.h>
 #include <linux/sched/task_stack.h>
+#include <linux/hw_breakpoint.h>
 
 #define CREATE_TRACE_POINTS
 #include <trace/events/syscalls.h>
@@ -26,6 +27,10 @@ enum riscv_regset {
 	REGSET_X,
 #ifdef CONFIG_FPU
 	REGSET_F,
+#endif
+#ifdef CONFIG_HAVE_HW_BREAKPOINT
+	REGSET_HW_BREAK,
+	REGSET_HW_WATCH,
 #endif
 };
 
@@ -83,6 +88,170 @@ static int riscv_fpr_set(struct task_struct *target,
 }
 #endif
 
+#ifdef CONFIG_HAVE_HW_BREAKPOINT
+static void ptrace_hbptriggered(struct perf_event *bp,
+				struct perf_sample_data *data,
+				struct pt_regs *regs)
+{
+	struct arch_hw_breakpoint *bkpt = counter_arch_bp(bp);
+
+	force_sig_fault(SIGTRAP, TRAP_HWBKPT, (void __user *)bkpt->address);
+}
+
+static int hw_break_get(struct task_struct *target,
+			const struct user_regset *regset,
+			struct membuf to)
+{
+	/* send total number of h/w debug triggers */
+	u64 count = hw_breakpoint_slots(regset->core_note_type);
+
+	membuf_write(&to, &count, sizeof(count));
+	return 0;
+}
+
+static inline int hw_break_empty(u64 addr, u64 type, u64 size)
+{
+	/* TODO: for now adjusted to current riscv-gdb behavior */
+	return (!addr && !size);
+}
+
+static int hw_break_setup_trigger(struct task_struct *target, u64 addr,
+				  u64 type, u64 size, int idx)
+{
+	struct perf_event *bp = ERR_PTR(-EINVAL);
+	struct perf_event_attr attr;
+	u32 bp_type;
+	u64 bp_len;
+
+	if (!hw_break_empty(addr, type, size)) {
+		/* bp size: gdb to kernel */
+		switch (size) {
+		case 2:
+			bp_len = HW_BREAKPOINT_LEN_2;
+			break;
+		case 4:
+			bp_len = HW_BREAKPOINT_LEN_4;
+			break;
+		case 8:
+			bp_len = HW_BREAKPOINT_LEN_8;
+			break;
+		default:
+			pr_warn("%s: unsupported size: %llu\n", __func__, size);
+			return -EINVAL;
+		}
+
+		/* bp type: gdb to kernel */
+		switch (type) {
+		case 0:
+			bp_type = HW_BREAKPOINT_X;
+			break;
+		case 1:
+			bp_type = HW_BREAKPOINT_R;
+			break;
+		case 2:
+			bp_type = HW_BREAKPOINT_W;
+			break;
+		case 3:
+			bp_type = HW_BREAKPOINT_RW;
+			break;
+		default:
+			pr_warn("%s: unsupported type: %llu\n", __func__, type);
+			return -EINVAL;
+		}
+	}
+
+	bp = target->thread.ptrace_bps[idx];
+	if (bp) {
+		attr = bp->attr;
+
+		if (hw_break_empty(addr, type, size)) {
+			attr.disabled = 1;
+		} else {
+			attr.bp_type = bp_type;
+			attr.bp_addr = addr;
+			attr.bp_len = bp_len;
+			attr.disabled = 0;
+		}
+
+		return modify_user_hw_breakpoint(bp, &attr);
+	}
+
+	if (hw_break_empty(addr, type, size))
+		return 0;
+
+	ptrace_breakpoint_init(&attr);
+	attr.bp_type = bp_type;
+	attr.bp_addr = addr;
+	attr.bp_len = bp_len;
+
+	bp = register_user_hw_breakpoint(&attr, ptrace_hbptriggered,
+					 NULL, target);
+	if (IS_ERR(bp))
+		return PTR_ERR(bp);
+
+	target->thread.ptrace_bps[idx] = bp;
+	return 0;
+}
+
+static int hw_break_set(struct task_struct *target,
+			const struct user_regset *regset,
+			unsigned int pos, unsigned int count,
+			const void *kbuf, const void __user *ubuf)
+{
+	int ret, idx = 0, offset, limit;
+	u64 addr;
+	u64 type;
+	u64 size;
+
+#define PTRACE_HBP_ADDR_SZ	sizeof(u64)
+#define PTRACE_HBP_TYPE_SZ	sizeof(u64)
+#define PTRACE_HBP_SIZE_SZ	sizeof(u64)
+
+	/* Resource info and pad */
+	offset = offsetof(struct user_hwdebug_state, dbg_regs);
+	ret = user_regset_copyin_ignore(&pos, &count, &kbuf, &ubuf, 0, offset);
+	if (ret)
+		return ret;
+
+	/* trigger settings */
+	limit = regset->n * regset->size;
+	while (count && offset < limit) {
+		if (count < PTRACE_HBP_ADDR_SZ)
+			return -EINVAL;
+		ret = user_regset_copyin(&pos, &count, &kbuf, &ubuf, &addr,
+					 offset, offset + PTRACE_HBP_ADDR_SZ);
+		if (ret)
+			return ret;
+
+		offset += PTRACE_HBP_ADDR_SZ;
+
+		if (!count)
+			break;
+		ret = user_regset_copyin(&pos, &count, &kbuf, &ubuf, &type,
+					 offset, offset + PTRACE_HBP_TYPE_SZ);
+		if (ret)
+			return ret;
+
+		offset += PTRACE_HBP_TYPE_SZ;
+
+		ret = user_regset_copyin(&pos, &count, &kbuf, &ubuf, &size,
+					 offset, offset + PTRACE_HBP_SIZE_SZ);
+		if (ret)
+			return ret;
+
+		offset += PTRACE_HBP_SIZE_SZ;
+
+		ret = hw_break_setup_trigger(target, addr, type, size, idx);
+		if (ret)
+			return ret;
+
+		idx++;
+	}
+
+	return 0;
+}
+#endif
+
 static const struct user_regset riscv_user_regset[] = {
 	[REGSET_X] = {
 		.core_note_type = NT_PRSTATUS,
@@ -102,6 +271,25 @@ static const struct user_regset riscv_user_regset[] = {
 		.set = riscv_fpr_set,
 	},
 #endif
+#ifdef CONFIG_HAVE_HW_BREAKPOINT
+	[REGSET_HW_BREAK] = {
+		.core_note_type = NT_ARM_HW_BREAK,
+		.n = sizeof(struct user_hwdebug_state) / sizeof(u32),
+		.size = sizeof(u32),
+		.align = sizeof(u32),
+		.regset_get = hw_break_get,
+		.set = hw_break_set,
+	},
+	[REGSET_HW_WATCH] = {
+		.core_note_type = NT_ARM_HW_WATCH,
+		.n = sizeof(struct user_hwdebug_state) / sizeof(u32),
+		.size = sizeof(u32),
+		.align = sizeof(u32),
+		.regset_get = hw_break_get,
+		.set = hw_break_set,
+	},
+#endif
+
 };
 
 static const struct user_regset_view riscv_user_native_view = {

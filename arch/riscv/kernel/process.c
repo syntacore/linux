@@ -15,6 +15,7 @@
 #include <linux/tick.h>
 #include <linux/ptrace.h>
 #include <linux/uaccess.h>
+#include <linux/hw_breakpoint.h>
 
 #include <asm/unistd.h>
 #include <asm/processor.h>
@@ -148,6 +149,7 @@ void flush_thread(void)
 	fstate_off(current, task_pt_regs(current));
 	memset(&current->thread.fstate, 0, sizeof(current->thread.fstate));
 #endif
+	flush_ptrace_hw_breakpoint(current);
 }
 
 int arch_dup_task_struct(struct task_struct *dst, struct task_struct *src)
