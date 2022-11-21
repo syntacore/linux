@@ -39,6 +39,7 @@
 #define RISCV_SCR_PMU_PDEV_NAME "scr-l2cache-pmu"
 
 #define L2_NUM_COUNTERS	4
+#define COUNTER_MASK ((1ULL << 63) - 1)
 
 /*
  * Events
@@ -184,7 +185,7 @@ static u64 scr_pmu_event_update(struct perf_event *event)
 					 new_raw_count);
 	} while (oldval != prev_raw_count);
 
-	delta = (new_raw_count - prev_raw_count);
+	delta = (new_raw_count - prev_raw_count) & COUNTER_MASK;
 	local64_add(delta, &event->count);
 	local64_sub(delta, &hwc->period_left);
 
