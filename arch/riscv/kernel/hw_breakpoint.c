@@ -2,6 +2,7 @@
 
 #include <linux/hw_breakpoint.h>
 #include <linux/perf_event.h>
+#include <linux/spinlock.h>
 #include <linux/percpu.h>
 #include <linux/kdebug.h>
 
@@ -9,6 +10,8 @@
 
 /* bps/wps currently set on each debug trigger for each cpu */
 static DEFINE_PER_CPU(struct perf_event *, bp_per_reg[HBP_NUM_MAX]);
+static DEFINE_PER_CPU(unsigned long, msg_lock_flags);
+static DEFINE_PER_CPU(raw_spinlock_t, msg_lock);
 
 static struct sbi_dbtr_data_msg __percpu *sbi_xmit;
 static struct sbi_dbtr_id_msg __percpu *sbi_recv;
@@ -318,6 +321,10 @@ int arch_install_hw_breakpoint(struct perf_event *bp)
 	struct perf_event **slot;
 	unsigned long idx;
 	struct sbiret ret;
+	int err = 0;
+
+	raw_spin_lock_irqsave(this_cpu_ptr(&msg_lock),
+			  *this_cpu_ptr(&msg_lock_flags));
 
 	xmit->tdata1 = cpu_to_lle(info->trig_data1.value);
 	xmit->tdata2 = cpu_to_lle(info->trig_data2);
@@ -328,25 +335,31 @@ int arch_install_hw_breakpoint(struct perf_event *bp)
 			0, 0, 0);
 	if (ret.error) {
 		pr_warn("%s: failed to install trigger\n", __func__);
-		return -EIO;
+		err = -EIO;
+		goto done;
 	}
 
 	idx = lle_to_cpu(recv->idx);
 
 	if (idx >= dbtr_total_num) {
 		pr_warn("%s: invalid trigger index %lu\n", __func__, idx);
-		return -EINVAL;
+		err = -EINVAL;
+		goto done;
 	}
 
 	slot = this_cpu_ptr(&bp_per_reg[idx]);
 	if (*slot) {
 		pr_warn("%s: slot %lu is in use\n", __func__, idx);
-		return -EBUSY;
+		err = -EBUSY;
+		goto done;
 	}
 
 	*slot = bp;
 
-	return 0;
+done:
+	raw_spin_unlock_irqrestore(this_cpu_ptr(&msg_lock),
+			       *this_cpu_ptr(&msg_lock_flags));
+	return err;
 }
 
 /* atomic: counter->ctx->lock is held */
@@ -374,6 +387,96 @@ void arch_uninstall_hw_breakpoint(struct perf_event *bp)
 	if (ret.error)
 		pr_warn("%s: failed to uninstall trigger %d\n", __func__, i);
 }
+
+void arch_enable_hw_breakpoint(struct perf_event *bp)
+{
+	struct sbiret ret;
+	int i;
+
+	for (i = 0; i < dbtr_total_num; i++) {
+		struct perf_event **slot = this_cpu_ptr(&bp_per_reg[i]);
+
+		if (*slot == bp)
+			break;
+	}
+
+	if (i == dbtr_total_num) {
+		pr_warn("%s: unknown breakpoint\n", __func__);
+		return;
+	}
+
+	ret = sbi_ecall(SBI_EXT_DBTR, SBI_EXT_DBTR_TRIGGER_ENABLE,
+			i, 1, 0, 0, 0, 0);
+	if (ret.error) {
+		pr_warn("%s: failed to install trigger %d\n", __func__, i);
+		return;
+	}
+}
+EXPORT_SYMBOL_GPL(arch_enable_hw_breakpoint);
+
+void arch_update_hw_breakpoint(struct perf_event *bp)
+{
+	struct arch_hw_breakpoint *info = counter_arch_bp(bp);
+	struct sbi_dbtr_data_msg *xmit = this_cpu_ptr(sbi_xmit);
+	struct perf_event **slot;
+	struct sbiret ret;
+	int i;
+
+	for (i = 0; i < dbtr_total_num; i++) {
+		slot = this_cpu_ptr(&bp_per_reg[i]);
+
+		if (*slot == bp)
+			break;
+	}
+
+	if (i == dbtr_total_num) {
+		pr_warn("%s: unknown breakpoint\n", __func__);
+		return;
+	}
+
+	raw_spin_lock_irqsave(this_cpu_ptr(&msg_lock),
+			  *this_cpu_ptr(&msg_lock_flags));
+
+	xmit->tdata1 = cpu_to_lle(info->trig_data1.value);
+	xmit->tdata2 = cpu_to_lle(info->trig_data2);
+	xmit->tdata3 = cpu_to_lle(info->trig_data3);
+
+	ret = sbi_ecall(SBI_EXT_DBTR, SBI_EXT_DBTR_TRIGGER_UPDATE,
+			i, 1, __pa(xmit) >> 4,
+			0, 0, 0);
+	if (ret.error)
+		pr_warn("%s: failed to update trigger %d\n", __func__, i);
+
+	raw_spin_unlock_irqrestore(this_cpu_ptr(&msg_lock),
+			       *this_cpu_ptr(&msg_lock_flags));
+}
+EXPORT_SYMBOL_GPL(arch_update_hw_breakpoint);
+
+void arch_disable_hw_breakpoint(struct perf_event *bp)
+{
+	struct sbiret ret;
+	int i;
+
+	for (i = 0; i < dbtr_total_num; i++) {
+		struct perf_event **slot = this_cpu_ptr(&bp_per_reg[i]);
+
+		if (*slot == bp)
+			break;
+	}
+
+	if (i == dbtr_total_num) {
+		pr_warn("%s: unknown breakpoint\n", __func__);
+		return;
+	}
+
+	ret = sbi_ecall(SBI_EXT_DBTR, SBI_EXT_DBTR_TRIGGER_DISABLE,
+			i, 1, 0, 0, 0, 0);
+	if (ret.error) {
+		pr_warn("%s: failed to uninstall trigger %d\n", __func__, i);
+		return;
+	}
+}
+EXPORT_SYMBOL_GPL(arch_disable_hw_breakpoint);
 
 void hw_breakpoint_pmu_read(struct perf_event *bp)
 {
@@ -406,6 +509,8 @@ void flush_ptrace_hw_breakpoint(struct task_struct *tsk)
 
 static int __init arch_hw_breakpoint_init(void)
 {
+	unsigned int cpu;
+
 	sbi_xmit = __alloc_percpu(sizeof(*sbi_xmit), SZ_16);
 	if (!sbi_xmit) {
 		pr_warn("failed to allocate SBI xmit message buffer\n");
@@ -417,6 +522,9 @@ static int __init arch_hw_breakpoint_init(void)
 		pr_warn("failed to allocate SBI recv message buffer\n");
 		return -ENOMEM;
 	}
+
+	for_each_possible_cpu(cpu)
+		raw_spin_lock_init(&per_cpu(msg_lock, cpu));
 
 	if (!dbtr_init)
 		arch_hw_breakpoint_init_sbi();
