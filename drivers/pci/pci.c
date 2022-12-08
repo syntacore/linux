@@ -1882,10 +1882,24 @@ int pci_reenable_device(struct pci_dev *dev)
 }
 EXPORT_SYMBOL(pci_reenable_device);
 
+#ifdef CONFIG_DEBUG_LOCK_ALLOC
+static int pci_bridge_depth(struct pci_dev *dev)
+{
+	struct pci_dev *bridge = pci_upstream_bridge(dev);
+
+	if (!bridge)
+		return 0;
+
+	return 1 + pci_bridge_depth(bridge);
+}
+#endif /* CONFIG_DEBUG_LOCK_ALLOC */
+
 static void pci_enable_bridge(struct pci_dev *dev)
 {
 	struct pci_dev *bridge;
 	int retval;
+
+	mutex_lock_nested(&dev->enable_mutex, pci_bridge_depth(dev));
 
 	bridge = pci_upstream_bridge(dev);
 	if (bridge)
@@ -1894,6 +1908,7 @@ static void pci_enable_bridge(struct pci_dev *dev)
 	if (pci_is_enabled(dev)) {
 		if (!dev->is_busmaster)
 			pci_set_master(dev);
+		mutex_unlock(&dev->enable_mutex);
 		return;
 	}
 
@@ -1902,6 +1917,7 @@ static void pci_enable_bridge(struct pci_dev *dev)
 		pci_err(dev, "Error enabling bridge (%d), continuing\n",
 			retval);
 	pci_set_master(dev);
+	mutex_unlock(&dev->enable_mutex);
 }
 
 static int pci_enable_device_flags(struct pci_dev *dev, unsigned long flags)
