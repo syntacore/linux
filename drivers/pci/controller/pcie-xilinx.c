@@ -345,11 +345,11 @@ static const struct irq_domain_ops intx_domain_ops = {
  *
  * Return: IRQ_HANDLED on success and IRQ_NONE on failure
  */
-static irqreturn_t xilinx_pcie_intr_handler(int irq, void *data)
+static irqreturn_t _xilinx_pcie_intr_handler(struct xilinx_pcie_port *port)
 {
-	struct xilinx_pcie_port *port = (struct xilinx_pcie_port *)data;
 	struct device *dev = port->dev;
 	u32 val, mask, status, rpsc;
+	bool fifo_empty;
 
 	/* Read interrupt decode and mask registers */
 	val = pcie_read(port, XILINX_PCIE_REG_IDR);
@@ -371,8 +371,11 @@ static irqreturn_t xilinx_pcie_intr_handler(int irq, void *data)
 	if (rpsc & XILINX_PCIE_REG_RPSC_ERR_FIFO)
 		dev_warn(dev, "Error FIFO is not empty\n");
 
+	fifo_empty = !(rpsc & XILINX_PCIE_REG_RPSC_ERR_FIFO) &&
+		!(rpsc & XILINX_PCIE_REG_RPSC_FIFO);
+
 	status = val & mask;
-	if (!status)
+	if (!status && fifo_empty)
 		return IRQ_NONE;
 
 	if (status & XILINX_PCIE_INTR_LINK_DOWN)
@@ -405,16 +408,10 @@ static irqreturn_t xilinx_pcie_intr_handler(int irq, void *data)
 		xilinx_pcie_clear_err_interrupts(port);
 	}
 
-	if (status & (XILINX_PCIE_INTR_INTX | XILINX_PCIE_INTR_MSI)) {
+	val = pcie_read(port, XILINX_PCIE_REG_RPIFR1);
+
+	if (val & XILINX_PCIE_RPIFR1_INTR_VALID) {
 		struct irq_domain *domain;
-
-		val = pcie_read(port, XILINX_PCIE_REG_RPIFR1);
-
-		/* Check whether interrupt valid */
-		if (!(val & XILINX_PCIE_RPIFR1_INTR_VALID)) {
-			dev_warn(dev, "RP Intr FIFO1 read error\n");
-			goto error;
-		}
 
 		/* Decode the IRQ number */
 		if (val & XILINX_PCIE_RPIFR1_MSI_INTR) {
@@ -461,9 +458,22 @@ static irqreturn_t xilinx_pcie_intr_handler(int irq, void *data)
 	if (status & XILINX_PCIE_INTR_MST_ERRP)
 		dev_warn(dev, "Master error poison\n");
 
-error:
 	/* Clear the Interrupt Decode register */
 	pcie_write(port, status, XILINX_PCIE_REG_IDR);
+
+	return IRQ_HANDLED;
+}
+
+static irqreturn_t xilinx_pcie_intr_handler(int irq, void *data)
+{
+	struct xilinx_pcie_port *port = (struct xilinx_pcie_port *)data;
+	int count = 100;
+
+	/* Don't hang forever */
+	while (count--) {
+		if (_xilinx_pcie_intr_handler(port) == IRQ_NONE)
+			break;
+	}
 
 	return IRQ_HANDLED;
 }
