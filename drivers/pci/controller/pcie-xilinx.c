@@ -83,6 +83,10 @@
 
 /* Root Port Status/control Register definitions */
 #define XILINX_PCIE_REG_RPSC_BEN	BIT(0)
+#define XILINX_PCIE_REG_RPSC_ERR_FIFO	BIT(16)
+#define XILINX_PCIE_REG_RPSC_ERR_OVERFLOW	BIT(19)
+#define XILINX_PCIE_REG_RPSC_FIFO	BIT(18)
+#define XILINX_PCIE_REG_RPSC_OVERFLOW	BIT(19)
 
 /* Phy Status/Control Register definitions */
 #define XILINX_PCIE_REG_PSCR_LNKUP	BIT(11)
@@ -345,11 +349,27 @@ static irqreturn_t xilinx_pcie_intr_handler(int irq, void *data)
 {
 	struct xilinx_pcie_port *port = (struct xilinx_pcie_port *)data;
 	struct device *dev = port->dev;
-	u32 val, mask, status;
+	u32 val, mask, status, rpsc;
 
 	/* Read interrupt decode and mask registers */
 	val = pcie_read(port, XILINX_PCIE_REG_IDR);
 	mask = pcie_read(port, XILINX_PCIE_REG_IMR);
+	rpsc = pcie_read(port, XILINX_PCIE_REG_RPSC);
+
+	if (rpsc & XILINX_PCIE_REG_RPSC_OVERFLOW) {
+		dev_warn(dev, "FIFO Overflow\n");
+		pcie_write(port, XILINX_PCIE_REG_RPSC_OVERFLOW,
+			   XILINX_PCIE_REG_RPSC);
+	}
+
+	if (rpsc & XILINX_PCIE_REG_RPSC_ERR_OVERFLOW) {
+		dev_warn(dev, "Error FIFO Overflow\n");
+		pcie_write(port, XILINX_PCIE_REG_RPSC_ERR_OVERFLOW,
+			   XILINX_PCIE_REG_RPSC);
+	}
+
+	if (rpsc & XILINX_PCIE_REG_RPSC_ERR_FIFO)
+		dev_warn(dev, "Error FIFO is not empty\n");
 
 	status = val & mask;
 	if (!status)
