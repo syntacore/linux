@@ -63,6 +63,7 @@
 
 #define PLIC_QUIRK_EDGE_INTERRUPT	0
 #define PLIC_QUIRK_SCR_SET_MODE		1
+#define PLIC_QUIRK_SCR_REG_MAP		2
 
 #define SCR_MODE_BASE			0x1f0000
 
@@ -455,6 +456,8 @@ static int __init __plic_init(struct device_node *node,
 			      unsigned long plic_quirks)
 {
 	int error = 0, nr_contexts, nr_handlers = 0, i;
+	u32 ctx_enable_base = CONTEXT_ENABLE_BASE;
+	u32 ctx_enable_size = CONTEXT_ENABLE_SIZE;
 	u32 nr_irqs;
 	struct plic_priv *priv;
 	struct plic_handler *handler;
@@ -493,6 +496,20 @@ static int __init __plic_init(struct device_node *node,
 	if (WARN_ON(!priv->irqdomain))
 		goto out_free_priority_reg;
 
+	if (test_bit(PLIC_QUIRK_SCR_REG_MAP, &priv->plic_quirks)) {
+		u32 irq_en_base;
+		u32 irq_en_size;
+		int base_err = of_property_read_u32(node, "scr,irq_en_base",
+						    &irq_en_base);
+		int size_err = of_property_read_u32(node, "scr,irq_en_size",
+						    &irq_en_size);
+
+		if (!base_err && !size_err) {
+			ctx_enable_base = irq_en_base;
+			ctx_enable_size = irq_en_size;
+		}
+	}
+
 	for (i = 0; i < nr_contexts; i++) {
 		struct of_phandle_args parent;
 		irq_hw_number_t hwirq;
@@ -512,8 +529,8 @@ static int __init __plic_init(struct device_node *node,
 			/* Disable S-mode enable bits if running in M-mode. */
 			if (IS_ENABLED(CONFIG_RISCV_M_MODE)) {
 				void __iomem *enable_base = priv->regs +
-					CONTEXT_ENABLE_BASE +
-					i * CONTEXT_ENABLE_SIZE;
+					ctx_enable_base +
+					i * ctx_enable_size;
 
 				for (hwirq = 1; hwirq <= nr_irqs; hwirq++)
 					__plic_toggle(enable_base, hwirq, 0);
@@ -558,8 +575,8 @@ static int __init __plic_init(struct device_node *node,
 		handler->hart_base = priv->regs + CONTEXT_BASE +
 			i * CONTEXT_SIZE;
 		raw_spin_lock_init(&handler->enable_lock);
-		handler->enable_base = priv->regs + CONTEXT_ENABLE_BASE +
-			i * CONTEXT_ENABLE_SIZE;
+		handler->enable_base = priv->regs + ctx_enable_base +
+			i * ctx_enable_size;
 		handler->priv = priv;
 
 		handler->enable_save =  kcalloc(DIV_ROUND_UP(nr_irqs, 32),
@@ -632,6 +649,11 @@ IRQCHIP_DECLARE(thead_c900_plic, "thead,c900-plic", plic_edge_init);
 static int __init plic_scr_init(struct device_node *node,
 				struct device_node *parent)
 {
-	return __plic_init(node, parent, BIT(PLIC_QUIRK_SCR_SET_MODE));
+	unsigned long plic_quirks = BIT(PLIC_QUIRK_SCR_SET_MODE);
+
+	if (of_find_property(node, "scr,plic-msi", NULL))
+		plic_quirks |= BIT(PLIC_QUIRK_SCR_REG_MAP);
+
+	return __plic_init(node, parent, plic_quirks);
 }
 IRQCHIP_DECLARE(syntacore_plic, "syntacore,plic", plic_scr_init);
