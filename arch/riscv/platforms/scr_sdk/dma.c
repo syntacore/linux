@@ -91,7 +91,8 @@ static const char *dma_dir2str(enum dma_data_direction dir)
 // instruction: clflush <regn> (cache line flush & invalidate)
 #define ENC_CLFLUSH(regn) (0x10900073 | (((regn) & 0x1f) << 15))
 
-#define SCR_CACHE_SYNC_SIZE ARCH_DMA_MINALIGN
+// 32 bytes should work for both 32 and 64 bytes cache lines
+#define SCR_CACHE_SYNC_SIZE 32
 
 static void cache_addr_invalidate(void *vaddr, size_t size)
 {
