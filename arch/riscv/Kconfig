@@ -362,10 +362,10 @@ endmenu
 menuconfig CPU_RV_SCR
 	bool "Syntacore SCRx platform support"
 	default n
-	select GENERIC_ALLOCATOR
 	select OF_RESERVED_MEM
-	select ARCH_HAS_SETUP_DMA_OPS
-	select DMA_OPS
+	select DMA_GLOBAL_POOL
+	select ARCH_HAS_SYNC_DMA_FOR_DEVICE
+	select ARCH_HAS_SYNC_DMA_FOR_CPU
 
 if CPU_RV_SCR
 
