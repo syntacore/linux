@@ -2073,9 +2073,8 @@ static int axienet_probe(struct platform_device *pdev)
 		}
 	}
 	if (!IS_ENABLED(CONFIG_64BIT) && lp->features & XAE_FEATURE_DMA_64BIT) {
-		dev_err(&pdev->dev, "64-bit addressable DMA is not compatible with 32-bit archecture\n");
-		ret = -EINVAL;
-		goto cleanup_clk;
+		dev_warn(&pdev->dev, "64-bit DMA might be incompatible with 32-bit system\n");
+		addr_width = 32;
 	}
 
 	ret = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(addr_width));

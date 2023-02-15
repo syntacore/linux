@@ -606,6 +606,9 @@ static inline void axienet_dma_out_addr(struct axienet_local *lp, off_t reg,
 					dma_addr_t addr)
 {
 	axienet_dma_out32(lp, reg, lower_32_bits(addr));
+
+	if (lp->features & XAE_FEATURE_DMA_64BIT)
+		axienet_dma_out32(lp, reg + 4, upper_32_bits(addr));
 }
 
 #endif /* CONFIG_64BIT */
