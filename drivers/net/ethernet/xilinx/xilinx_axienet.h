@@ -449,7 +449,7 @@ struct axienet_local {
 	bool switch_x_sgmii;
 
 	struct clk *axi_clk;
-	struct clk_bulk_data misc_clks[XAE_NUM_MISC_CLOCKS];
+	struct clk_bulk_data *misc_clks;
 
 	struct mii_bus *mii_bus;
 	u8 mii_clk_div;

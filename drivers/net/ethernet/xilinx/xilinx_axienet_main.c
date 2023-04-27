@@ -1883,6 +1883,15 @@ static int axienet_probe(struct platform_device *pdev)
 	netif_napi_add(ndev, &lp->napi_rx, axienet_rx_poll);
 	netif_napi_add(ndev, &lp->napi_tx, axienet_tx_poll);
 
+	lp->misc_clks = devm_kzalloc(&pdev->dev,
+				     sizeof(struct clk_bulk_data) *
+				     XAE_NUM_MISC_CLOCKS,
+				     GFP_KERNEL);
+	if (!lp->misc_clks) {
+		ret = -ENOMEM;
+		goto free_netdev;
+	}
+
 	lp->axi_clk = devm_clk_get_optional(&pdev->dev, "s_axi_lite_clk");
 	if (!lp->axi_clk) {
 		/* For backward compatibility, if named AXI clock is not present,
