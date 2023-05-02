@@ -476,6 +476,7 @@ int kvm_riscv_vcpu_pmu_ctr_cfg_match(struct kvm_vcpu *vcpu, unsigned long ctr_ba
 		.exclude_hv = true,
 		.exclude_user = !!(flags & SBI_PMU_CFG_FLAG_SET_UINH),
 		.exclude_kernel = !!(flags & SBI_PMU_CFG_FLAG_SET_SINH),
+		.exclude_machine = !!(flags & SBI_PMU_CFG_FLAG_SET_MINH),
 		.config1 = RISCV_PMU_CONFIG1_GUEST_EVENTS,
 	};
 
