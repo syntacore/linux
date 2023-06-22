@@ -3,6 +3,9 @@
 # Performance Monitor Drivers
 #
 
+config RISCV_PMU_SCR_CORE
+	bool
+
 menu "Performance monitor support"
 	depends on PERF_EVENTS
 
@@ -88,10 +91,20 @@ config RISCV_PMU_SBI
 
 config RISCV_PMU_SCR_L2_SBI
 	depends on RISCV_SBI
+	select RISCV_PMU_SCR_CORE
 	bool "RISC-V Syntacore SCR L2 PMU based on SBI VENDOR extension"
 	default n
 	help
-	  Say y if you want to use the SCR L2 SoC performance monitor
+	  Say y if you want to use the SCR L2 cache performance monitor
+	  using SBI VENDOR extension.
+
+config RISCV_PMU_SCR_L3_SBI
+	depends on RISCV_SBI
+	select RISCV_PMU_SCR_CORE
+	bool "RISC-V Syntacore SCR L3 PMU based on SBI VENDOR extension"
+	default n
+	help
+	  Say y if you want to use the SCR L3 cache performance monitor
 	  using SBI VENDOR extension.
 
 config ARM_PMU_ACPI
