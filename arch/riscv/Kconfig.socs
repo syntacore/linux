@@ -113,6 +113,10 @@ endif # ARCH_CANAAN
 
 config SOC_SCR
 	bool "Syntacore SoCs"
+	select MTIMER_TIMER if RISCV_M_MODE
+	select SKIP_PMP_SETUP if RISCV_M_MODE
+	select SCR_ICCM_CSR if RISCV_M_MODE && SMP
+	select SCR_ICCM_MMIO if RISCV_M_MODE && SMP
 	select SIFIVE_PLIC
 	select OF_RESERVED_MEM
 	select IOMMU_DMA if IOMMU_SUPPORT
