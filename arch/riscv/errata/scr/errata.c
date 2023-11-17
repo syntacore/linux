@@ -5,6 +5,7 @@
 
 #include <linux/bug.h>
 #include <linux/kernel.h>
+#include <linux/memory.h>
 #include <linux/module.h>
 #include <linux/string.h>
 #include <linux/uaccess.h>
@@ -46,11 +47,14 @@ void __init_or_module scr_errata_patch_func(struct alt_entry *begin, struct alt_
 		tmp = (1U << alt->patch_id);
 		if (cpu_req_errata & tmp) {
 			/* On vm-alternatives, the mmu isn't running yet */
-			if (stage == RISCV_ALTERNATIVES_EARLY_BOOT)
+			if (stage == RISCV_ALTERNATIVES_EARLY_BOOT) {
 				memcpy((void *)__pa_symbol(ALT_OLD_PTR(alt)),
 				       (void *)__pa_symbol(ALT_ALT_PTR(alt)), alt->alt_len);
-			else
+			} else {
+				mutex_lock(&text_mutex);
 				patch_text_nosync(ALT_OLD_PTR(alt), ALT_ALT_PTR(alt), alt->alt_len);
+				mutex_unlock(&text_mutex);
+			}
 		}
 	}
 
