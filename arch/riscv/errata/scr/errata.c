@@ -24,7 +24,8 @@ static u32 scr_errata_probe(unsigned int stage, unsigned long archid, unsigned l
 		riscv_cbom_block_size = scr_min_cbom_size;
 
 	/* Every CPU is affected */
-	riscv_noncoherent_supported();
+	if (stage == RISCV_ALTERNATIVES_BOOT)
+	    riscv_noncoherent_supported();
 	cpu_req_errata |= (1U << ERRATA_SCR_CMO);
 
 	return cpu_req_errata;
