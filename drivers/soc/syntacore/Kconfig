@@ -1,0 +1,19 @@
+# SPDX-License-Identifier: GPL-2.0
+
+config SCR_ICCM_CSR
+	bool "Syntacore CSR based Inter-core communication module"
+	depends on RISCV && SOC_SCR && OF && SMP
+	help
+	  The Inter-core communication module (ICCM) is used to maintain
+	  synchronization and data exchanges between the cores (HARTs)
+	  by message passing mechanism. The L2 cluster ICCM uses
+	  CSR based interface.
+
+config SCR_ICCM_MMIO
+	bool "Syntacore MMIO based Inter-core communication module"
+	depends on RISCV && SOC_SCR && OF && SMP
+	help
+	  The Inter-core communication module (ICCM) is used to maintain
+	  synchronization and data exchanges between the cores (HARTs)
+	  by message passing mechanism. The L3 cluster ICCM uses
+	  MMIO based interface.
