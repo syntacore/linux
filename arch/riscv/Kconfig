@@ -883,6 +883,18 @@ config RISCV_ISA_FALLBACK
 	  on the replacement properties, "riscv,isa-base" and
 	  "riscv,isa-extensions".
 
+config SKIP_PMP_SETUP
+	bool "Skip PMP setup on boot in M-mode" if COMPILE_TEST
+	depends on RISCV_M_MODE
+	default n
+	help
+	  Skip PMP setup when booting NOMMU Linux in M-mode. Memory protection
+	  depends on hardware. Some hardware platforms may provide additional
+	  PMP flags. Others may implement custom memory protection blocks. In
+	  such cases memory protection can be configured in the first stage
+	  bootloader. Use this flag to keep existing memory protection settings
+	  configured by the bootloader.
+
 endmenu # "Boot options"
 
 config BUILTIN_DTB
