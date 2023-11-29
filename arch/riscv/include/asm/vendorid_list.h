@@ -8,5 +8,6 @@
 #define ANDESTECH_VENDOR_ID	0x31e
 #define SIFIVE_VENDOR_ID	0x489
 #define THEAD_VENDOR_ID		0x5b7
+#define SCR_VENDOR_ID		0x6bb
 
 #endif
