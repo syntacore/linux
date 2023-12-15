@@ -18,6 +18,8 @@
 
 #include <asm/sbi.h>
 
+DEFINE_PER_CPU(struct cpu_hw_events, hw_events);
+
 static bool riscv_perf_user_access(struct perf_event *event)
 {
 	return ((event->attr.type == PERF_TYPE_HARDWARE) ||
@@ -273,6 +275,10 @@ static int riscv_pmu_add(struct perf_event *event, int flags)
 	struct hw_perf_event *hwc = &event->hw;
 	int idx;
 
+	/* An event following a process won't be stopped earlier */
+	if (!cpumask_test_cpu(smp_processor_id(), &rvpmu->supported_cpus))
+		return -ENOENT;
+
 	idx = rvpmu->ctr_get_idx(event);
 	if (idx < 0)
 		return idx;
@@ -320,6 +326,9 @@ static int riscv_pmu_event_init(struct perf_event *event)
 	int mapped_event;
 	u64 event_config = 0;
 	uint64_t cmask;
+
+	if (event->cpu != -1 && !cpumask_test_cpu(event->cpu, &rvpmu->supported_cpus))
+		return -ENOENT;
 
 	hwc->flags = 0;
 	mapped_event = rvpmu->event_map(event, &event_config);
@@ -391,23 +400,22 @@ static void riscv_pmu_event_unmapped(struct perf_event *event, struct mm_struct 
 	}
 }
 
-struct riscv_pmu *riscv_pmu_alloc(void)
+struct riscv_pmu *riscv_pmu_alloc(const cpumask_t *cpus)
 {
 	struct riscv_pmu *pmu;
 	int cpuid, i;
 	struct cpu_hw_events *cpuc;
 
+	if (!cpus || cpumask_first(cpus) >= nr_cpu_ids)
+		goto out;
+
 	pmu = kzalloc(sizeof(*pmu), GFP_KERNEL);
 	if (!pmu)
 		goto out;
 
-	pmu->hw_events = alloc_percpu_gfp(struct cpu_hw_events, GFP_KERNEL);
-	if (!pmu->hw_events) {
-		pr_info("failed to allocate per-cpu PMU data.\n");
-		goto out_free_pmu;
-	}
+	pmu->hw_events = &hw_events;
 
-	for_each_possible_cpu(cpuid) {
+	for_each_cpu(cpuid, cpus) {
 		cpuc = per_cpu_ptr(pmu->hw_events, cpuid);
 		cpuc->n_events = 0;
 		for (i = 0; i < RISCV_MAX_COUNTERS; i++)
@@ -425,10 +433,10 @@ struct riscv_pmu *riscv_pmu_alloc(void)
 		.read		= riscv_pmu_read,
 	};
 
+	cpumask_copy(&pmu->supported_cpus, cpus);
+
 	return pmu;
 
-out_free_pmu:
-	kfree(pmu);
 out:
 	return NULL;
 }

@@ -43,7 +43,7 @@ struct cpu_hw_events {
 
 struct riscv_pmu {
 	struct pmu	pmu;
-	char		*name;
+	const char	*name;
 
 	irqreturn_t	(*handle_irq)(int irq_num, void *dev);
 
@@ -63,7 +63,11 @@ struct riscv_pmu {
 	struct cpu_hw_events	__percpu *hw_events;
 	struct hlist_node	node;
 	struct notifier_block   riscv_pm_nb;
+
+	cpumask_t               supported_cpus;
 };
+
+DECLARE_PER_CPU(struct cpu_hw_events, hw_events);
 
 #define to_riscv_pmu(p) (container_of(p, struct riscv_pmu, pmu))
 
@@ -78,7 +82,7 @@ void riscv_pmu_legacy_skip_init(void);
 #else
 static inline void riscv_pmu_legacy_skip_init(void) {};
 #endif
-struct riscv_pmu *riscv_pmu_alloc(void);
+struct riscv_pmu *riscv_pmu_alloc(const cpumask_t *cpus);
 #ifdef CONFIG_RISCV_PMU_SBI
 int riscv_pmu_get_hpm_info(u32 *hw_ctr_width, u32 *num_hw_ctr);
 #endif
