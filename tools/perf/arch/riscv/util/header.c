@@ -12,79 +12,49 @@
 #include "../../util/debug.h"
 #include "../../util/header.h"
 
-#define CPUINFO_MVEN	"mvendorid"
-#define CPUINFO_MARCH	"marchid"
-#define CPUINFO_MIMP	"mimpid"
-#define CPUINFO		"/proc/cpuinfo"
+#include <asm/unistd.h>
+#include <asm/hwprobe.h>
+#include <internal/cpumap.h>
 
-static char *_get_field(const char *line)
+enum {
+	MVENDORID = 0,
+	MARCHID,
+	MIMPID,
+};
+
+static char *_get_cpuid(struct perf_cpu_map *cpus)
 {
-	char *line2, *nl;
-
-	line2 = strrchr(line, ' ');
-	if (!line2)
-		return NULL;
-
-	line2++;
-	nl = strrchr(line, '\n');
-	if (!nl)
-		return NULL;
-
-	return strndup(line2, nl - line2);
-}
-
-static char *_get_cpuid(void)
-{
-	char *line = NULL;
-	char *mvendorid = NULL;
-	char *marchid = NULL;
-	char *mimpid = NULL;
 	char *cpuid = NULL;
-	int read;
-	unsigned long line_sz;
-	FILE *cpuinfo;
+	unsigned long cpu_mask = 0UL;
+	unsigned long cpu = RC_CHK_ACCESS(cpus)->map[0].cpu;
 
-	cpuinfo = fopen(CPUINFO, "r");
-	if (cpuinfo == NULL)
-		return cpuid;
+	struct riscv_hwprobe query[] = {[MVENDORID] = {RISCV_HWPROBE_KEY_MVENDORID, 0},
+					[MARCHID]   = {RISCV_HWPROBE_KEY_MARCHID,   0},
+					[MIMPID]    = {RISCV_HWPROBE_KEY_MIMPID,    0}};
 
-	while ((read = getline(&line, &line_sz, cpuinfo)) != -1) {
-		if (!strncmp(line, CPUINFO_MVEN, strlen(CPUINFO_MVEN))) {
-			mvendorid = _get_field(line);
-			if (!mvendorid)
-				goto free;
-		} else if (!strncmp(line, CPUINFO_MARCH, strlen(CPUINFO_MARCH))) {
-			marchid = _get_field(line);
-			if (!marchid)
-				goto free;
-		} else if (!strncmp(line, CPUINFO_MIMP, strlen(CPUINFO_MIMP))) {
-			mimpid = _get_field(line);
-			if (!mimpid)
-				goto free;
+	if (cpu >= sizeof(cpu_mask) * 8)
+		goto exit;
 
-			break;
-		}
-	}
+	cpu_mask |= (1UL << cpu);
 
-	if (!mvendorid || !marchid || !mimpid)
-		goto free;
+	if (syscall(__NR_riscv_hwprobe, &query[0], ARRAY_SIZE(query), 1, &cpu_mask, 0))
+		goto exit;
 
-	if (asprintf(&cpuid, "%s-%s-%s", mvendorid, marchid, mimpid) < 0)
+	if (asprintf(&cpuid, "0x%llx-0x%llx-0x%llx", query[MVENDORID].value,
+			query[MARCHID].value, query[MIMPID].value) < 0)
 		cpuid = NULL;
 
-free:
-	fclose(cpuinfo);
-	free(mvendorid);
-	free(marchid);
-	free(mimpid);
-
+exit:
 	return cpuid;
 }
 
 int get_cpuid(char *buffer, size_t sz)
 {
-	char *cpuid = _get_cpuid();
+	struct perf_cpu_map *cpus = perf_cpu_map__new(NULL);
+	char *cpuid;
 	int ret = 0;
+
+	cpuid = _get_cpuid(cpus);
 
 	if (sz < strlen(cpuid)) {
 		ret = -EINVAL;
@@ -93,6 +63,7 @@ int get_cpuid(char *buffer, size_t sz)
 
 	scnprintf(buffer, sz, "%s", cpuid);
 free:
+	perf_cpu_map__put(cpus);
 	free(cpuid);
 	return ret;
 }
@@ -100,5 +71,7 @@ free:
 char *
 get_cpuid_str(struct perf_pmu *pmu __maybe_unused)
 {
-	return _get_cpuid();
+	if (!pmu || !pmu->cpus)
+		return NULL;
+	return _get_cpuid(pmu->cpus);
 }
