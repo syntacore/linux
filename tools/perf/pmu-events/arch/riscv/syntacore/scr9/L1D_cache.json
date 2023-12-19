@@ -83,5 +83,60 @@
     "EventName": "L1D_CM",
     "EventCode": "0x0000135",
     "BriefDescription": "L1D cache maintenance instructions speculatively executed"
+  },
+  {
+    "EventName": "L1D_LD_REPL",
+    "EventCode": "0x0000145",
+    "BriefDescription": "L1D_LD_REPL counter counts when load is replayed"
+  },
+  {
+    "EventName": "L1D_ST_REPL",
+    "EventCode": "0x0000155",
+    "BriefDescription": "L1D_ST_REPL counter counts when store is replayed"
+  },
+  {
+    "EventName": "L1D_PREF_HIT",
+    "EventCode": "0x0000165",
+    "BriefDescription": "L1D_PREF_HIT counter counts hitting prefetch operations to the clb or cache"
+  },
+  {
+    "EventName": "L1D_PREF_MISS",
+    "EventCode": "0x0000175",
+    "BriefDescription": "L1D_PREF_MISS counter counts missing operations to the clb or cache"
+  },
+  {
+    "EventName": "L1D_LD_MSLGN",
+    "EventCode": "0x0000185",
+    "BriefDescription": "L1D_LD_MSLGN counter counts misaligned load"
+  },
+  {
+    "EventName": "L1D_ST_MSLGN",
+    "EventCode": "0x0000195",
+    "BriefDescription": "L1D_ST_MSLGN counter counts misaligned store"
+  },
+  {
+    "EventName": "L1D_LD_VEC",
+    "EventCode": "0x00001a5",
+    "BriefDescription": "L1D_LD_VEC counter counts vectored load"
+  },
+  {
+    "EventName": "L1D_ST_VEC",
+    "EventCode": "0x00001b5",
+    "BriefDescription": "L1D_ST_VEC counter counts vectored store"
+  },
+  {
+    "EventName": "L1D_ECC_COR",
+    "EventCode": "0x00001c5",
+    "BriefDescription": "L1D_ECC_COR counter counts correctable errors"
+  },
+  {
+    "EventName": "L1D_ECC_UNCOR",
+    "EventCode": "0x00001d5",
+    "BriefDescription": "L1D_ECC_UNCOR counter counts uncorrectable errors"
+  },
+  {
+    "EventName": "L1D_ECC_ERR",
+    "EventCode": "0x00001e5",
+    "BriefDescription": "L1D_ECC_ERR counter counts number of corrections"
   }
 ]

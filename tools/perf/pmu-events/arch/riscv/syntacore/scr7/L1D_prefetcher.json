@@ -1,0 +1,47 @@
+[
+  {
+    "EventName": "L1D_PF_ISS",
+    "EventCode": "0x0000009",
+    "BriefDescription": "Issued instruction arrives to prefetcher"
+  },
+  {
+    "EventName": "L1D_PF_REQ",
+    "EventCode": "0x0000019",
+    "BriefDescription": "Prefetch request issued"
+  },
+  {
+    "EventName": "L1D_PF_ISS_HIT",
+    "EventCode": "0x0000029",
+    "BriefDescription": "Issued instruction hit one or the prefetcher’s entries"
+  },
+  {
+    "EventName": "L1D_PF_FLT_HIT",
+    "EventCode": "0x0000039",
+    "BriefDescription": "Prefetch request hit the same address as some of the already waiting queue prefetch requests"
+  },
+  {
+    "EventName": "L1D_PF_HIT_SM",
+    "EventCode": "0x0000049",
+    "BriefDescription": "Issued instruction hit one of the perfetcher’s entries but the address doesn’t match the predicted one (stride miss)"
+  },
+  {
+    "EventName": "L1D_PF_HIT_DC",
+    "EventCode": "0x0000059",
+    "BriefDescription": "Prefetch hit cache"
+  },
+  {
+    "EventName": "L1D_PF_HIT_CLB",
+    "EventCode": "0x0000069",
+    "BriefDescription": "Prefetch hit CLB"
+  },
+  {
+    "EventName": "L1D_PF_CANCEL",
+    "EventCode": "0x0000079",
+    "BriefDescription": "Prefetch cancelled"
+  },
+  {
+    "EventName": "L1D_PF_ISS_INV",
+    "EventCode": "0x0000089",
+    "BriefDescription": "Prefetch request that was waiting in queue is invalidated"
+  }
+]

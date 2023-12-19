@@ -1,0 +1,67 @@
+[
+  {
+    "EventName": "L1I_HIT",
+    "EventCode": "0x0000004",
+    "BriefDescription": "L1I hit"
+  },
+  {
+    "EventName": "L1I_MISS",
+    "EventCode": "0x0000014",
+    "BriefDescription": "L1I miss"
+  },
+  {
+    "EventName": "L1I_REFILL",
+    "EventCode": "0x0000024",
+    "BriefDescription": "L1I refill"
+  },
+  {
+    "EventName": "L1I_PREF_HIT",
+    "EventCode": "0x0000034",
+    "BriefDescription": "L1I prefetcher hit (prefetcher not implemented yet)"
+  },
+  {
+    "EventName": "L1I_PREF_MISS",
+    "EventCode": "0x0000044",
+    "BriefDescription": "L1I prefetcher miss (prefetcher not implemented yet)"
+  },
+  {
+    "EventName": "L1I_PREF_REFILL",
+    "EventCode": "0x0000054",
+    "BriefDescription": "L1I prefetcher refill (prefetcher not implemented yet)"
+  },
+  {
+    "EventName": "L1I_TLB_ACCESS",
+    "EventCode": "0x0000064",
+    "BriefDescription": "L1I TLB access"
+  },
+  {
+    "EventName": "L1I_TLB_MISS",
+    "EventCode": "0x0000074",
+    "BriefDescription": "L1I TLB miss"
+  },
+  {
+    "EventName": "L1I_SNP",
+    "EventCode": "0x0000084",
+    "BriefDescription": "L1I snoop requests"
+  },
+  {
+    "EventName": "L1I_SNP_DUMMY",
+    "EventCode": "0x0000094",
+    "BriefDescription": "L1I dummy snoop requests"
+  },
+  {
+    "EventName": "L1I_EVICT",
+    "EventCode": "0x00000a4",
+    "BriefDescription": "L1I eviction"
+  },
+  {
+    "EventName": "L1I_NC_REQ",
+    "EventCode": "0x00000b4",
+    "BriefDescription": "L1I Non-cacheable request"
+  },
+  {
+    "EventName": "L1I_SO_REQ",
+    "EventCode": "0x00000c4",
+    "BriefDescription": "L1I Strongly ordered request"
+  }
+]
