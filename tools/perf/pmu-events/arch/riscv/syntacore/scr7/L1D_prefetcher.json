@@ -2,46 +2,55 @@
   {
     "EventName": "L1D_PF_ISS",
     "EventCode": "0x0000009",
-    "BriefDescription": "Issued instruction arrives to prefetcher"
+    "BriefDescription": "Issued instruction arrives to prefetcher",
+    "Unit": "scr7"
   },
   {
     "EventName": "L1D_PF_REQ",
     "EventCode": "0x0000019",
-    "BriefDescription": "Prefetch request issued"
+    "BriefDescription": "Prefetch request issued",
+    "Unit": "scr7"
   },
   {
     "EventName": "L1D_PF_ISS_HIT",
     "EventCode": "0x0000029",
-    "BriefDescription": "Issued instruction hit one or the prefetcher’s entries"
+    "BriefDescription": "Issued instruction hit one or the prefetcher’s entries",
+    "Unit": "scr7"
   },
   {
     "EventName": "L1D_PF_FLT_HIT",
     "EventCode": "0x0000039",
-    "BriefDescription": "Prefetch request hit the same address as some of the already waiting queue prefetch requests"
+    "BriefDescription": "Prefetch request hit the same address as some of the already waiting queue prefetch requests",
+    "Unit": "scr7"
   },
   {
     "EventName": "L1D_PF_HIT_SM",
     "EventCode": "0x0000049",
-    "BriefDescription": "Issued instruction hit one of the perfetcher’s entries but the address doesn’t match the predicted one (stride miss)"
+    "BriefDescription": "Issued instruction hit one of the perfetcher’s entries but the address doesn’t match the predicted one (stride miss)",
+    "Unit": "scr7"
   },
   {
     "EventName": "L1D_PF_HIT_DC",
     "EventCode": "0x0000059",
-    "BriefDescription": "Prefetch hit cache"
+    "BriefDescription": "Prefetch hit cache",
+    "Unit": "scr7"
   },
   {
     "EventName": "L1D_PF_HIT_CLB",
     "EventCode": "0x0000069",
-    "BriefDescription": "Prefetch hit CLB"
+    "BriefDescription": "Prefetch hit CLB",
+    "Unit": "scr7"
   },
   {
     "EventName": "L1D_PF_CANCEL",
     "EventCode": "0x0000079",
-    "BriefDescription": "Prefetch cancelled"
+    "BriefDescription": "Prefetch cancelled",
+    "Unit": "scr7"
   },
   {
     "EventName": "L1D_PF_ISS_INV",
     "EventCode": "0x0000089",
-    "BriefDescription": "Prefetch request that was waiting in queue is invalidated"
+    "BriefDescription": "Prefetch request that was waiting in queue is invalidated",
+    "Unit": "scr7"
   }
 ]

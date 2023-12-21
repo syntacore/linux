@@ -2,66 +2,79 @@
   {
     "EventName": "L1I_HIT",
     "EventCode": "0x0000004",
-    "BriefDescription": "L1I hit"
+    "BriefDescription": "L1I hit",
+    "Unit": "scr7"
   },
   {
     "EventName": "L1I_MISS",
     "EventCode": "0x0000014",
-    "BriefDescription": "L1I miss"
+    "BriefDescription": "L1I miss",
+    "Unit": "scr7"
   },
   {
     "EventName": "L1I_REFILL",
     "EventCode": "0x0000024",
-    "BriefDescription": "L1I refill"
+    "BriefDescription": "L1I refill",
+    "Unit": "scr7"
   },
   {
     "EventName": "L1I_PREF_HIT",
     "EventCode": "0x0000034",
-    "BriefDescription": "L1I prefetcher hit (prefetcher not implemented yet)"
+    "BriefDescription": "L1I prefetcher hit (prefetcher not implemented yet)",
+    "Unit": "scr7"
   },
   {
     "EventName": "L1I_PREF_MISS",
     "EventCode": "0x0000044",
-    "BriefDescription": "L1I prefetcher miss (prefetcher not implemented yet)"
+    "BriefDescription": "L1I prefetcher miss (prefetcher not implemented yet)",
+    "Unit": "scr7"
   },
   {
     "EventName": "L1I_PREF_REFILL",
     "EventCode": "0x0000054",
-    "BriefDescription": "L1I prefetcher refill (prefetcher not implemented yet)"
+    "BriefDescription": "L1I prefetcher refill (prefetcher not implemented yet)",
+    "Unit": "scr7"
   },
   {
     "EventName": "L1I_TLB_ACCESS",
     "EventCode": "0x0000064",
-    "BriefDescription": "L1I TLB access"
+    "BriefDescription": "L1I TLB access",
+    "Unit": "scr7"
   },
   {
     "EventName": "L1I_TLB_MISS",
     "EventCode": "0x0000074",
-    "BriefDescription": "L1I TLB miss"
+    "BriefDescription": "L1I TLB miss",
+    "Unit": "scr7"
   },
   {
     "EventName": "L1I_SNP",
     "EventCode": "0x0000084",
-    "BriefDescription": "L1I snoop requests"
+    "BriefDescription": "L1I snoop requests",
+    "Unit": "scr7"
   },
   {
     "EventName": "L1I_SNP_DUMMY",
     "EventCode": "0x0000094",
-    "BriefDescription": "L1I dummy snoop requests"
+    "BriefDescription": "L1I dummy snoop requests",
+    "Unit": "scr7"
   },
   {
     "EventName": "L1I_EVICT",
     "EventCode": "0x00000a4",
-    "BriefDescription": "L1I eviction"
+    "BriefDescription": "L1I eviction",
+    "Unit": "scr7"
   },
   {
     "EventName": "L1I_NC_REQ",
     "EventCode": "0x00000b4",
-    "BriefDescription": "L1I Non-cacheable request"
+    "BriefDescription": "L1I Non-cacheable request",
+    "Unit": "scr7"
   },
   {
     "EventName": "L1I_SO_REQ",
     "EventCode": "0x00000c4",
-    "BriefDescription": "L1I Strongly ordered request"
+    "BriefDescription": "L1I Strongly ordered request",
+    "Unit": "scr7"
   }
 ]

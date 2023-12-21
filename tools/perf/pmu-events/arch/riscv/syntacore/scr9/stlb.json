@@ -2,91 +2,109 @@
     {
       "EventName": "STLB_REQ",
       "EventCode": "0x000000b",
-      "BriefDescription": "STLB access"
+      "BriefDescription": "STLB access",
+      "Unit": "scr9"
     },
     {
       "EventName": "STLB_REFILL",
       "EventCode": "0x000001b",
-      "BriefDescription": "STLB refill"
+      "BriefDescription": "STLB refill",
+      "Unit": "scr9"
     },
     {
       "EventName": "STLB_ITLB_REQ",
       "EventCode": "0x000002b",
-      "BriefDescription": "STLB get request from iTLB"
+      "BriefDescription": "STLB get request from iTLB",
+      "Unit": "scr9"
     },
     {
       "EventName": "STLB_DTLB_REQ",
       "EventCode": "0x000003b",
-      "BriefDescription": "STLB get request from dTLB"
+      "BriefDescription": "STLB get request from dTLB",
+      "Unit": "scr9"
     },
     {
       "EventName": "STLB_ITLB_FLUSH",
       "EventCode": "0x000004b",
-      "BriefDescription": "STLB get flush request for iTLB"
+      "BriefDescription": "STLB get flush request for iTLB",
+      "Unit": "scr9"
     },
     {
       "EventName": "STLB_DTLB_FLUSH",
       "EventCode": "0x000005b",
-      "BriefDescription": "STLB get flush request for dTLB"
+      "BriefDescription": "STLB get flush request for dTLB",
+      "Unit": "scr9"
     },
     {
       "EventName": "STLB_ITLB_MISS",
       "EventCode": "0x000006b",
-      "BriefDescription": "STLB miss on iTLB request"
+      "BriefDescription": "STLB miss on iTLB request",
+      "Unit": "scr9"
     },
     {
       "EventName": "STLB_DTLB_MISS",
       "EventCode": "0x000007b",
-      "BriefDescription": "STLB miss on dTLB request"
+      "BriefDescription": "STLB miss on dTLB request",
+      "Unit": "scr9"
     },
     {
       "EventName": "STLB_ITLB_STALL",
       "EventCode": "0x000008b",
-      "BriefDescription": "iTLB request stall"
+      "BriefDescription": "iTLB request stall",
+      "Unit": "scr9"
     },
     {
       "EventName": "STLB_DTLB_STALL",
       "EventCode": "0x000009b",
-      "BriefDescription": "dTLB request stall"
+      "BriefDescription": "dTLB request stall",
+      "Unit": "scr9"
     },
     {
       "EventName": "STLB_HPW_STALL",
       "EventCode": "0x00000ab",
-      "BriefDescription": "HPW request stall"
+      "BriefDescription": "HPW request stall",
+      "Unit": "scr9"
     },
     {
       "EventName": "STLB_SFENCE_STALL",
       "EventCode": "0x00000bb",
-      "BriefDescription": "SFENCE request stall"
+      "BriefDescription": "SFENCE request stall",
+      "Unit": "scr9"
     },
     {
       "EventName": "STLB_SFENCE_FLUSH_ALL",
       "EventCode": "0x00000cb",
-      "BriefDescription": "SFENCE flush all request"
+      "BriefDescription": "SFENCE flush all request",
+      "Unit": "scr9"
     },
     {
       "EventName": "STLB_SFENCE_FLUSH_VPN",
       "EventCode": "0x00000db",
-      "BriefDescription": "SFENCE flush with matching VPN request"
+      "BriefDescription": "SFENCE flush with matching VPN request",
+      "Unit": "scr9"
     },
     {
       "EventName": "STLB_SFENCE_FLUSH_ASID",
       "EventCode": "0x00000eb",
-      "BriefDescription": "SFENCE flush with matching ASID request"
+      "BriefDescription": "SFENCE flush with matching ASID request",
+      "Unit": "scr9"
     },
     {
       "EventName": "STLB_SFENCE_FLUSH_TARGET",
       "EventCode": "0x00000fb",
-      "BriefDescription": "SFENCE flush with matching ASID and VPN"
+      "BriefDescription": "SFENCE flush with matching ASID and VPN",
+      "Unit": "scr9"
     },
     {
       "EventName": "STLB_RESP_WO_ERR",
       "EventCode": "0x000010b",
-      "BriefDescription": "STLB response without errors"
+      "BriefDescription": "STLB response without errors",
+      "Unit": "scr9"
     },
     {
       "EventName": "STLB_RESP_ANY",
       "EventCode": "0x000011b",
-      "BriefDescription": "STLB response"
+      "BriefDescription": "STLB response",
+      "Unit": "scr9"
     }
 ]

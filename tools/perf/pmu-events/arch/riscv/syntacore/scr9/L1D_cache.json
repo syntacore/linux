@@ -2,141 +2,169 @@
   {
     "EventName": "L1D_HIT",
     "EventCode": "0x0000005",
-    "BriefDescription": "L1D hit"
+    "BriefDescription": "L1D hit",
+    "Unit": "scr9"
   },
   {
     "EventName": "L1D_MISS",
     "EventCode": "0x0000015",
-    "BriefDescription": "L1D miss"
+    "BriefDescription": "L1D miss",
+    "Unit": "scr9"
   },
   {
     "EventName": "L1D_REFILL",
     "EventCode": "0x0000025",
-    "BriefDescription": "L1D refill"
+    "BriefDescription": "L1D refill",
+    "Unit": "scr9"
   },
   {
     "EventName": "L1D_TLB_ACCESS",
     "EventCode": "0x0000065",
-    "BriefDescription": "L1D TLB access"
+    "BriefDescription": "L1D TLB access",
+    "Unit": "scr9"
   },
   {
     "EventName": "L1D_TLB_MISS",
     "EventCode": "0x0000075",
-    "BriefDescription": "L1D TLB miss"
+    "BriefDescription": "L1D TLB miss",
+    "Unit": "scr9"
   },
   {
     "EventName": "L1D_SNP",
     "EventCode": "0x0000085",
-    "BriefDescription": "L1D snoop requests"
+    "BriefDescription": "L1D snoop requests",
+    "Unit": "scr9"
   },
   {
     "EventName": "L1D_SNP_DUMMY",
     "EventCode": "0x0000095",
-    "BriefDescription": "L1D dummy snoop requests"
+    "BriefDescription": "L1D dummy snoop requests",
+    "Unit": "scr9"
   },
   {
     "EventName": "L1D_EVICT",
     "EventCode": "0x00000a5",
-    "BriefDescription": "L1D eviction"
+    "BriefDescription": "L1D eviction",
+    "Unit": "scr9"
   },
   {
     "EventName": "L1D_NC_REQ",
     "EventCode": "0x00000b5",
-    "BriefDescription": "L1D Non-cacheable request"
+    "BriefDescription": "L1D Non-cacheable request",
+    "Unit": "scr9"
   },
   {
     "EventName": "L1D_SO_REQ",
     "EventCode": "0x00000c5",
-    "BriefDescription": "L1D Strongly ordered request"
+    "BriefDescription": "L1D Strongly ordered request",
+    "Unit": "scr9"
   },
   {
     "EventName": "L1D_LD",
     "EventCode": "0x00000d5",
-    "BriefDescription": "L1D load speculatively executed"
+    "BriefDescription": "L1D load speculatively executed",
+    "Unit": "scr9"
   },
   {
     "EventName": "L1D_ST",
     "EventCode": "0x00000e5",
-    "BriefDescription": "L1D store speculatively executed"
+    "BriefDescription": "L1D store speculatively executed",
+    "Unit": "scr9"
   },
   {
     "EventName": "L1D_FENCE",
     "EventCode": "0x00000f5",
-    "BriefDescription": "L1D fence speculatively executed"
+    "BriefDescription": "L1D fence speculatively executed",
+    "Unit": "scr9"
   },
   {
     "EventName": "L1D_AMO",
     "EventCode": "0x0000105",
-    "BriefDescription": "L1D amo speculatively executed"
+    "BriefDescription": "L1D amo speculatively executed",
+    "Unit": "scr9"
   },
   {
     "EventName": "L1D_LR",
     "EventCode": "0x0000115",
-    "BriefDescription": "L1D load-reserved speculatively executed"
+    "BriefDescription": "L1D load-reserved speculatively executed",
+    "Unit": "scr9"
   },
   {
     "EventName": "L1D_SC",
     "EventCode": "0x0000125",
-    "BriefDescription": "L1D store-conditional speculatively executed"
+    "BriefDescription": "L1D store-conditional speculatively executed",
+    "Unit": "scr9"
   },
   {
     "EventName": "L1D_CM",
     "EventCode": "0x0000135",
-    "BriefDescription": "L1D cache maintenance instructions speculatively executed"
+    "BriefDescription": "L1D cache maintenance instructions speculatively executed",
+    "Unit": "scr9"
   },
   {
     "EventName": "L1D_LD_REPL",
     "EventCode": "0x0000145",
-    "BriefDescription": "L1D_LD_REPL counter counts when load is replayed"
+    "BriefDescription": "L1D_LD_REPL counter counts when load is replayed",
+    "Unit": "scr9"
   },
   {
     "EventName": "L1D_ST_REPL",
     "EventCode": "0x0000155",
-    "BriefDescription": "L1D_ST_REPL counter counts when store is replayed"
+    "BriefDescription": "L1D_ST_REPL counter counts when store is replayed",
+    "Unit": "scr9"
   },
   {
     "EventName": "L1D_PREF_HIT",
     "EventCode": "0x0000165",
-    "BriefDescription": "L1D_PREF_HIT counter counts hitting prefetch operations to the clb or cache"
+    "BriefDescription": "L1D_PREF_HIT counter counts hitting prefetch operations to the clb or cache",
+    "Unit": "scr9"
   },
   {
     "EventName": "L1D_PREF_MISS",
     "EventCode": "0x0000175",
-    "BriefDescription": "L1D_PREF_MISS counter counts missing operations to the clb or cache"
+    "BriefDescription": "L1D_PREF_MISS counter counts missing operations to the clb or cache",
+    "Unit": "scr9"
   },
   {
     "EventName": "L1D_LD_MSLGN",
     "EventCode": "0x0000185",
-    "BriefDescription": "L1D_LD_MSLGN counter counts misaligned load"
+    "BriefDescription": "L1D_LD_MSLGN counter counts misaligned load",
+    "Unit": "scr9"
   },
   {
     "EventName": "L1D_ST_MSLGN",
     "EventCode": "0x0000195",
-    "BriefDescription": "L1D_ST_MSLGN counter counts misaligned store"
+    "BriefDescription": "L1D_ST_MSLGN counter counts misaligned store",
+    "Unit": "scr9"
   },
   {
     "EventName": "L1D_LD_VEC",
     "EventCode": "0x00001a5",
-    "BriefDescription": "L1D_LD_VEC counter counts vectored load"
+    "BriefDescription": "L1D_LD_VEC counter counts vectored load",
+    "Unit": "scr9"
   },
   {
     "EventName": "L1D_ST_VEC",
     "EventCode": "0x00001b5",
-    "BriefDescription": "L1D_ST_VEC counter counts vectored store"
+    "BriefDescription": "L1D_ST_VEC counter counts vectored store",
+    "Unit": "scr9"
   },
   {
     "EventName": "L1D_ECC_COR",
     "EventCode": "0x00001c5",
-    "BriefDescription": "L1D_ECC_COR counter counts correctable errors"
+    "BriefDescription": "L1D_ECC_COR counter counts correctable errors",
+    "Unit": "scr9"
   },
   {
     "EventName": "L1D_ECC_UNCOR",
     "EventCode": "0x00001d5",
-    "BriefDescription": "L1D_ECC_UNCOR counter counts uncorrectable errors"
+    "BriefDescription": "L1D_ECC_UNCOR counter counts uncorrectable errors",
+    "Unit": "scr9"
   },
   {
     "EventName": "L1D_ECC_ERR",
     "EventCode": "0x00001e5",
-    "BriefDescription": "L1D_ECC_ERR counter counts number of corrections"
+    "BriefDescription": "L1D_ECC_ERR counter counts number of corrections",
+    "Unit": "scr9"
   }
 ]

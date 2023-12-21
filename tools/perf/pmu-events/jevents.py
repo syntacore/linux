@@ -289,6 +289,8 @@ class JsonEvent:
           'cpu_core': 'cpu_core',
           'cpu_atom': 'cpu_atom',
           'ali_drw': 'ali_drw',
+          'scr7': 'scr7',
+          'scr9': 'scr9',
       }
       return table[unit] if unit in table else f'uncore_{unit.lower()}'
 

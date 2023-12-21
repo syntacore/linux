@@ -2,96 +2,115 @@
   {
     "EventName": "EXC_INT_RTR",
     "EventCode": "0x0000003",
-    "BriefDescription": "Integer non-cfi instuctions retired"
+    "BriefDescription": "Integer non-cfi instuctions retired",
+    "Unit": "scr7"
   },
   {
     "EventName": "EXC_FP_RTR",
     "EventCode": "0x0000013",
-    "BriefDescription": "Float-point instructions retired"
+    "BriefDescription": "Float-point instructions retired",
+    "Unit": "scr7"
   },
   {
     "EventName": "EXC_MEM_RTR",
     "EventCode": "0x0000023",
-    "BriefDescription": "Memory instructions retired"
+    "BriefDescription": "Memory instructions retired",
+    "Unit": "scr7"
   },
   {
     "EventName": "EXC_0IPC_RTR",
     "EventCode": "0x0000033",
-    "BriefDescription": "Number of cycles when no instruction retired"
+    "BriefDescription": "Number of cycles when no instruction retired",
+    "Unit": "scr7"
   },
   {
     "EventName": "EXC_1IPC_RTR",
     "EventCode": "0x0000043",
-    "BriefDescription": "Number of cycles when 1 instruction retired"
+    "BriefDescription": "Number of cycles when 1 instruction retired",
+    "Unit": "scr7"
   },
   {
     "EventName": "EXC_2IPC_RTR",
     "EventCode": "0x0000053",
-    "BriefDescription": "Number of cycles when 2 instruction retired"
+    "BriefDescription": "Number of cycles when 2 instruction retired",
+    "Unit": "scr7"
   },
   {
     "EventName": "EXC_3IPC_RTR",
     "EventCode": "0x0000063",
-    "BriefDescription": "Number of cycles when 3 instruction retired"
+    "BriefDescription": "Number of cycles when 3 instruction retired",
+    "Unit": "scr7"
   },
   {
     "EventName": "EXC_4IPC_RTR",
     "EventCode": "0x0000073",
-    "BriefDescription": "Number of cycles when 4 instruction retired"
+    "BriefDescription": "Number of cycles when 4 instruction retired",
+    "Unit": "scr7"
   },
   {
     "EventName": "EXC_BE_IDLE",
     "EventCode": "0x0000083",
-    "BriefDescription": "Number of cycles when there is no active operation in back-end"
+    "BriefDescription": "Number of cycles when there is no active operation in back-end",
+    "Unit": "scr7"
   },
   {
     "EventName": "EXC_W_ALUMUL",
     "EventCode": "0x0000093",
-    "BriefDescription": "Number of cycles when oldest instruction in results queue is waiting for ALU_MUL pipeline"
+    "BriefDescription": "Number of cycles when oldest instruction in results queue is waiting for ALU_MUL pipeline",
+    "Unit": "scr7"
   },
   {
     "EventName": "EXC_W_ALUDIV",
     "EventCode": "0x00000a3",
-    "BriefDescription": "Number of cycles when oldest instruction in results queue is waiting for ALU_DIV pipeline"
+    "BriefDescription": "Number of cycles when oldest instruction in results queue is waiting for ALU_DIV pipeline",
+    "Unit": "scr7"
   },
   {
     "EventName": "EXC_W_FPU",
     "EventCode": "0x00000b3",
-    "BriefDescription": "Number of cycles when oldest instruction in results queue is waiting for FPU pipeline"
+    "BriefDescription": "Number of cycles when oldest instruction in results queue is waiting for FPU pipeline",
+    "Unit": "scr7"
   },
   {
     "EventName": "EXC_W_LSU",
     "EventCode": "0x00000c3",
-    "BriefDescription": "Number of cycles when oldest instruction in results queue is waiting for LSU pipeline"
+    "BriefDescription": "Number of cycles when oldest instruction in results queue is waiting for LSU pipeline",
+    "Unit": "scr7"
   },
   {
     "EventName": "EXC_W_CSR",
     "EventCode": "0x00000d3",
-    "BriefDescription": "Number of cycles when oldest instruction in results queue is waiting for CSR pipeline"
+    "BriefDescription": "Number of cycles when oldest instruction in results queue is waiting for CSR pipeline",
+    "Unit": "scr7"
   },
   {
     "EventName": "EXC_ST_ISS",
     "EventCode": "0x00000e3",
-    "BriefDescription": "ISS stalls"
+    "BriefDescription": "ISS stalls",
+    "Unit": "scr7"
   },
   {
     "EventName": "EXC_ST_SRCT",
     "EventCode": "0x00000f3",
-    "BriefDescription": "Stalls because of structural hazards"
+    "BriefDescription": "Stalls because of structural hazards",
+    "Unit": "scr7"
   },
   {
     "EventName": "EXC_ST_INT",
     "EventCode": "0x0000103",
-    "BriefDescription": "Stalls because of integer pipelines SCB full"
+    "BriefDescription": "Stalls because of integer pipelines SCB full",
+    "Unit": "scr7"
   },
   {
     "EventName": "EXC_ST_LSU",
     "EventCode": "0x0000113",
-    "BriefDescription": "Stalls because of LSU CRQ full"
+    "BriefDescription": "Stalls because of LSU CRQ full",
+    "Unit": "scr7"
   },
   {
     "EventName": "EXC_ST_FPU",
     "EventCode": "0x00000123",
-    "BriefDescription": "Stalls because of FPU SCB full"
+    "BriefDescription": "Stalls because of FPU SCB full",
+    "Unit": "scr7"
   }
 ]

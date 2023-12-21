@@ -2,106 +2,127 @@
   {
     "EventName": "TRP_SSI",
     "EventCode": "0x0000008",
-    "BriefDescription": "S-mode SW Interrupt"
+    "BriefDescription": "S-mode SW Interrupt",
+    "Unit": "scr9"
   },
   {
     "EventName": "TRP_MSI",
     "EventCode": "0x0000018",
-    "BriefDescription": "M-mode SW Interrupt"
+    "BriefDescription": "M-mode SW Interrupt",
+    "Unit": "scr9"
   },
   {
     "EventName": "TRP_STI",
     "EventCode": "0x0000028",
-    "BriefDescription": "S-mode Timer Interrupt"
+    "BriefDescription": "S-mode Timer Interrupt",
+    "Unit": "scr9"
   },
   {
     "EventName": "TRP_MTI",
     "EventCode": "0x0000038",
-    "BriefDescription": "M-mode Timer Interrupt"
+    "BriefDescription": "M-mode Timer Interrupt",
+    "Unit": "scr9"
   },
   {
     "EventName": "TRP_SEI",
     "EventCode": "0x0000048",
-    "BriefDescription": "S-mode External Interrupt"
+    "BriefDescription": "S-mode External Interrupt",
+    "Unit": "scr9"
   },
   {
     "EventName": "TRP_MEI",
     "EventCode": "0x0000058",
-    "BriefDescription": "M-mode External Interrupt"
+    "BriefDescription": "M-mode External Interrupt",
+    "Unit": "scr9"
   },
   {
     "EventName": "TRP_IAF",
     "EventCode": "0x0000068",
-    "BriefDescription": "Instruction Access Fault"
+    "BriefDescription": "Instruction Access Fault",
+    "Unit": "scr9"
   },
   {
     "EventName": "TRP_ILLEG",
     "EventCode": "0x0000078",
-    "BriefDescription": "Illegal instruction"
+    "BriefDescription": "Illegal instruction",
+    "Unit": "scr9"
   },
   {
     "EventName": "TRP_BP",
     "EventCode": "0x0000088",
-    "BriefDescription": "Breakpoint"
+    "BriefDescription": "Breakpoint",
+    "Unit": "scr9"
   },
   {
     "EventName": "TRP_LAM",
     "EventCode": "0x0000098",
-    "BriefDescription": "Load address misaligned"
+    "BriefDescription": "Load address misaligned",
+    "Unit": "scr9"
   },
   {
     "EventName": "TRP_LAF",
     "EventCode": "0x00000a8",
-    "BriefDescription": "Load access fault"
+    "BriefDescription": "Load access fault",
+    "Unit": "scr9"
   },
   {
     "EventName": "TRP_SAM",
     "EventCode": "0x00000b8",
-    "BriefDescription": "Store/AMO address misaligned"
+    "BriefDescription": "Store/AMO address misaligned",
+    "Unit": "scr9"
   },
   {
     "EventName": "TRP_SAF",
     "EventCode": "0x00000c8",
-    "BriefDescription": "Store/AMO access fault"
+    "BriefDescription": "Store/AMO access fault",
+    "Unit": "scr9"
   },
   {
     "EventName": "TRP_UECALL",
     "EventCode": "0x00000d8",
-    "BriefDescription": "Environment call from U-mode"
+    "BriefDescription": "Environment call from U-mode",
+    "Unit": "scr9"
   },
   {
     "EventName": "TRP_SECALL",
     "EventCode": "0x00000e8",
-    "BriefDescription": "Environment call from S-mode"
+    "BriefDescription": "Environment call from S-mode",
+    "Unit": "scr9"
   },
   {
     "EventName": "TRP_MECALL",
     "EventCode": "0x00000f8",
-    "BriefDescription": "Environment call from M-mode"
+    "BriefDescription": "Environment call from M-mode",
+    "Unit": "scr9"
   },
   {
     "EventName": "TRP_IPF",
     "EventCode": "0x0000108",
-    "BriefDescription": "Instruction page fault"
+    "BriefDescription": "Instruction page fault",
+    "Unit": "scr9"
   },
   {
     "EventName": "TRP_LPF",
     "EventCode": "0x0000118",
-    "BriefDescription": "Load Page Fault"
+    "BriefDescription": "Load Page Fault",
+    "Unit": "scr9"
   },
   {
     "EventName": "TRP_SPF",
     "EventCode": "0x0000128",
-    "BriefDescription": "Store/AMO Page Fault"
+    "BriefDescription": "Store/AMO Page Fault",
+    "Unit": "scr9"
   },
   {
     "EventName": "TRP_TRAP_NUM",
     "EventCode": "0x0000138",
-    "BriefDescription": "TRAP Numbers"
+    "BriefDescription": "TRAP Numbers",
+    "Unit": "scr9"
   },
   {
     "EventName": "TRP_IRQ_NUM",
     "EventCode": "0x0000148",
-    "BriefDescription": "IRQ Numbers"
+    "BriefDescription": "IRQ Numbers",
+    "Unit": "scr9"
   }
 ]

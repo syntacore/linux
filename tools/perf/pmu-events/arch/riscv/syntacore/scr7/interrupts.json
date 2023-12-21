@@ -2,31 +2,37 @@
   {
     "EventName": "IRQ_SSI",
     "EventCode": "0x0000017",
-    "BriefDescription": "S-mode SW Interrupt"
+    "BriefDescription": "S-mode SW Interrupt",
+    "Unit": "scr7"
   },
   {
     "EventName": "IRQ_MSI",
     "EventCode": "0x0000037",
-    "BriefDescription": "M-mode SW Interrupt"
+    "BriefDescription": "M-mode SW Interrupt",
+    "Unit": "scr7"
   },
   {
     "EventName": "IRQ_STI",
     "EventCode": "0x0000057",
-    "BriefDescription": "S-mode Timer Interrupt"
+    "BriefDescription": "S-mode Timer Interrupt",
+    "Unit": "scr7"
   },
   {
     "EventName": "IRQ_MTI",
     "EventCode": "0x0000077",
-    "BriefDescription": "M-mode Timer Interrupt"
+    "BriefDescription": "M-mode Timer Interrupt",
+    "Unit": "scr7"
   },
   {
     "EventName": "IRQ_SEI",
     "EventCode": "0x0000097",
-    "BriefDescription": "S-mode External Interrupt"
+    "BriefDescription": "S-mode External Interrupt",
+    "Unit": "scr7"
   },
   {
     "EventName": "IRQ_MEI",
     "EventCode": "0x00000b7",
-    "BriefDescription": "M-mode External Interrupt"
+    "BriefDescription": "M-mode External Interrupt",
+    "Unit": "scr7"
   }
 ]

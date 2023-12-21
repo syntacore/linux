@@ -2,46 +2,55 @@
   {
     "EventName": "GEN_CYC",
     "EventCode": "0x0000001",
-    "BriefDescription": "Cycles"
+    "BriefDescription": "Cycles",
+    "Unit": "scr7"
   },
   {
     "EventName": "GEN_INST",
     "EventCode": "0x0000021",
-    "BriefDescription": "Instructions retired"
+    "BriefDescription": "Instructions retired",
+    "Unit": "scr7"
   },
   {
     "EventName": "GEN_ISS",
     "EventCode": "0x0000031",
-    "BriefDescription": "Instructions issued"
+    "BriefDescription": "Instructions issued",
+    "Unit": "scr7"
   },
   {
     "EventName": "GEN_SPEC_EXC",
     "EventCode": "0x0000041",
-    "BriefDescription": "Instructions executed speculatively"
+    "BriefDescription": "Instructions executed speculatively",
+    "Unit": "scr7"
   },
   {
     "EventName": "GEN_STRAP",
     "EventCode": "0x0000061",
-    "BriefDescription": "Trap/IRQ to S-mode"
+    "BriefDescription": "Trap/IRQ to S-mode",
+    "Unit": "scr7"
   },
   {
     "EventName": "GEN_MTRAP",
     "EventCode": "0x0000071",
-    "BriefDescription": "Trap/IRQ to M-mode"
+    "BriefDescription": "Trap/IRQ to M-mode",
+    "Unit": "scr7"
   },
   {
     "EventName": "GEN_URET",
     "EventCode": "0x0000081",
-    "BriefDescription": "MRET/SRET to U-mode"
+    "BriefDescription": "MRET/SRET to U-mode",
+    "Unit": "scr7"
   },
   {
     "EventName": "GEN_SRET",
     "EventCode": "0x0000091",
-    "BriefDescription": "MRET/SRET to S-mode"
+    "BriefDescription": "MRET/SRET to S-mode",
+    "Unit": "scr7"
   },
   {
     "EventName": "GEN_MRET",
     "EventCode": "0x00000a1",
-    "BriefDescription": "MRET to M-mode"
+    "BriefDescription": "MRET to M-mode",
+    "Unit": "scr7"
   }
 ]

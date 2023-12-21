@@ -1,65 +1,86 @@
 [
   {
-    "ArchStdEvent": "FW_MISALIGNED_LOAD"
+    "ArchStdEvent": "FW_MISALIGNED_LOAD",
+    "Unit": "scr7"
   },
   {
-    "ArchStdEvent": "FW_MISALIGNED_STORE"
+    "ArchStdEvent": "FW_MISALIGNED_STORE",
+    "Unit": "scr7"
   },
   {
-    "ArchStdEvent": "FW_ACCESS_LOAD"
+    "ArchStdEvent": "FW_ACCESS_LOAD",
+    "Unit": "scr7"
   },
   {
-    "ArchStdEvent": "FW_ACCESS_STORE"
+    "ArchStdEvent": "FW_ACCESS_STORE",
+    "Unit": "scr7"
   },
   {
-    "ArchStdEvent": "FW_ILLEGAL_INSN"
+    "ArchStdEvent": "FW_ILLEGAL_INSN",
+    "Unit": "scr7"
   },
   {
-    "ArchStdEvent": "FW_SET_TIMER"
+    "ArchStdEvent": "FW_SET_TIMER",
+    "Unit": "scr7"
   },
   {
-    "ArchStdEvent": "FW_IPI_SENT"
+    "ArchStdEvent": "FW_IPI_SENT",
+    "Unit": "scr7"
   },
   {
-    "ArchStdEvent": "FW_IPI_RECEIVED"
+    "ArchStdEvent": "FW_IPI_RECEIVED",
+    "Unit": "scr7"
   },
   {
-    "ArchStdEvent": "FW_FENCE_I_SENT"
+    "ArchStdEvent": "FW_FENCE_I_SENT",
+    "Unit": "scr7"
   },
   {
-    "ArchStdEvent": "FW_FENCE_I_RECEIVED"
+    "ArchStdEvent": "FW_FENCE_I_RECEIVED",
+    "Unit": "scr7"
   },
   {
-    "ArchStdEvent": "FW_SFENCE_VMA_SENT"
+    "ArchStdEvent": "FW_SFENCE_VMA_SENT",
+    "Unit": "scr7"
   },
   {
-    "ArchStdEvent": "FW_SFENCE_VMA_RECEIVED"
+    "ArchStdEvent": "FW_SFENCE_VMA_RECEIVED",
+    "Unit": "scr7"
   },
   {
-    "ArchStdEvent": "FW_SFENCE_VMA_ASID_RECEIVED"
+    "ArchStdEvent": "FW_SFENCE_VMA_ASID_RECEIVED",
+    "Unit": "scr7"
   },
   {
-    "ArchStdEvent": "FW_HFENCE_GVMA_SENT"
+    "ArchStdEvent": "FW_HFENCE_GVMA_SENT",
+    "Unit": "scr7"
   },
   {
-    "ArchStdEvent": "FW_HFENCE_GVMA_RECEIVED"
+    "ArchStdEvent": "FW_HFENCE_GVMA_RECEIVED",
+    "Unit": "scr7"
   },
   {
-    "ArchStdEvent": "FW_HFENCE_GVMA_VMID_SENT"
+    "ArchStdEvent": "FW_HFENCE_GVMA_VMID_SENT",
+    "Unit": "scr7"
   },
   {
-    "ArchStdEvent": "FW_HFENCE_GVMA_VMID_RECEIVED"
+    "ArchStdEvent": "FW_HFENCE_GVMA_VMID_RECEIVED",
+    "Unit": "scr7"
   },
   {
-    "ArchStdEvent": "FW_HFENCE_VVMA_SENT"
+    "ArchStdEvent": "FW_HFENCE_VVMA_SENT",
+    "Unit": "scr7"
   },
   {
-    "ArchStdEvent": "FW_HFENCE_VVMA_RECEIVED"
+    "ArchStdEvent": "FW_HFENCE_VVMA_RECEIVED",
+    "Unit": "scr7"
   },
   {
-    "ArchStdEvent": "FW_HFENCE_VVMA_ASID_SENT"
+    "ArchStdEvent": "FW_HFENCE_VVMA_ASID_SENT",
+    "Unit": "scr7"
   },
   {
-    "ArchStdEvent": "FW_HFENCE_VVMA_ASID_RECEIVED"
+    "ArchStdEvent": "FW_HFENCE_VVMA_ASID_RECEIVED",
+    "Unit": "scr7"
   }
 ]

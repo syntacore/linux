@@ -2,51 +2,61 @@
   {
     "EventName": "PRD_CFI",
     "EventCode": "0x0000002",
-    "BriefDescription": "CFI retired"
+    "BriefDescription": "CFI retired",
+    "Unit": "scr9"
   },
   {
     "EventName": "PRD_BRANCH",
     "EventCode": "0x0000012",
-    "BriefDescription": "Conditional branches retired"
+    "BriefDescription": "Conditional branches retired",
+    "Unit": "scr9"
   },
   {
     "EventName": "PRD_CALL",
     "EventCode": "0x0000022",
-    "BriefDescription": "Calls retired"
+    "BriefDescription": "Calls retired",
+    "Unit": "scr9"
   },
   {
     "EventName": "PRD_RET",
     "EventCode": "0x0000032",
-    "BriefDescription": "Returns retired"
+    "BriefDescription": "Returns retired",
+    "Unit": "scr9"
   },
   {
     "EventName": "PRD_DIR_JMP",
     "EventCode": "0x0000042",
-    "BriefDescription": "Direct jumps(not call) retired"
+    "BriefDescription": "Direct jumps(not call) retired",
+    "Unit": "scr9"
   },
   {
     "EventName": "PRD_REL_JMP",
     "EventCode": "0x0000052",
-    "BriefDescription": "Relative jumps(not return) retired"
+    "BriefDescription": "Relative jumps(not return) retired",
+    "Unit": "scr9"
   },
   {
     "EventName": "PRD_CFI_MIS",
     "EventCode": "0x0000062",
-    "BriefDescription": "CFI misspredictions"
+    "BriefDescription": "CFI misspredictions",
+    "Unit": "scr9"
   },
   {
     "EventName": "PRD_CALL_MIS",
     "EventCode": "0x0000072",
-    "BriefDescription": "Call misspredictions"
+    "BriefDescription": "Call misspredictions",
+    "Unit": "scr9"
   },
   {
     "EventName": "PRD_RET_MIS",
     "EventCode": "0x0000082",
-    "BriefDescription": "Return misspredictions"
+    "BriefDescription": "Return misspredictions",
+    "Unit": "scr9"
   },
   {
     "EventName": "PRD_BR_MIS",
     "EventCode": "0x0000092",
-    "BriefDescription": "Branch misspredictions"
+    "BriefDescription": "Branch misspredictions",
+    "Unit": "scr9"
   }
 ]
