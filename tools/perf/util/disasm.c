@@ -111,7 +111,7 @@ static int arch__associate_ins_ops(struct arch* arch, const char *name, struct i
 #include "arch/mips/annotate/instructions.c"
 #include "arch/x86/annotate/instructions.c"
 #include "arch/powerpc/annotate/instructions.c"
-#include "arch/riscv64/annotate/instructions.c"
+#include "arch/riscv/annotate/instructions.c"
 #include "arch/s390/annotate/instructions.c"
 #include "arch/sparc/annotate/instructions.c"
 
@@ -163,8 +163,8 @@ static struct arch architectures[] = {
 #endif
 	},
 	{
-		.name = "riscv64",
-		.init = riscv64__annotate_init,
+		.name = "riscv",
+		.init = riscv__annotate_init,
 	},
 	{
 		.name = "s390",

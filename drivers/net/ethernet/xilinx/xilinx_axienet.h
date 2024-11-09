@@ -556,7 +556,7 @@ struct axienet_local {
 	bool switch_x_sgmii;
 
 	struct clk *axi_clk;
-	struct clk_bulk_data misc_clks[XAE_NUM_MISC_CLOCKS];
+	struct clk_bulk_data *misc_clks;
 
 	struct mii_bus *mii_bus;
 	u8 mii_clk_div;
@@ -727,6 +727,9 @@ static inline void axienet_dma_out_addr(struct axienet_local *lp, off_t reg,
 					dma_addr_t addr)
 {
 	axienet_dma_out32(lp, reg, lower_32_bits(addr));
+
+	if (lp->features & XAE_FEATURE_DMA_64BIT)
+		axienet_dma_out32(lp, reg + 4, upper_32_bits(addr));
 }
 
 #endif /* CONFIG_64BIT */

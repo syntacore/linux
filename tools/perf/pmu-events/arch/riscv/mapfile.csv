@@ -18,3 +18,13 @@
 0x5b7-0x0-0x0,v1,thead/c900-legacy,core
 0x67e-0x80000000db0000[89]0-0x[[:xdigit:]]+,v1,starfive/dubhe-80,core
 0x31e-0x8000000000008a45-0x[[:xdigit:]]+,v1,andes/ax45,core
+0x6bb-0x8000000013007107-0x23082440,v1,syntacore/scr7/v1,core
+0x6bb-0x8000000013009107-0x23082535,v1,syntacore/scr9/v1,core
+0x6bb-0x[[:xdigit:]]{12}7[[:xdigit:]]{3}-0x[[:xdigit:]]+,v1,syntacore/scr7/top,core
+0x6bb-0x[[:xdigit:]]{12}9[[:xdigit:]]{3}-0x[[:xdigit:]]{7},v1,syntacore/scr9/top_generic,core
+0x6bb-0x[[:xdigit:]]{12}9[[:xdigit:]]{3}-0x1[[:xdigit:]]{8},v1,syntacore/scr9/top_v2/heavy,core
+0x6bb-0x[[:xdigit:]]{12}9[[:xdigit:]]{3}-0x2[[:xdigit:]]{8},v1,syntacore/scr9/top_v2/lite,core
+# Syntacore QEMU latest
+0x6bb-0x[[:xdigit:]]{12}9[[:xdigit:]]{3}-0x[[:xdigit:]]{2},v1,syntacore/scr9/v1,core
+# Syntacore QEMU old releases
+0x6bb-0x[[:xdigit:]]{12}9[[:xdigit:]]{3}-0x8000000013009107,v1,syntacore/scr9/v1,core

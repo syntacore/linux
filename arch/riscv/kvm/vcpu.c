@@ -20,6 +20,7 @@
 #include <asm/csr.h>
 #include <asm/cacheflush.h>
 #include <asm/kvm_vcpu_vector.h>
+#include <asm/kvm_vm_plf.h>
 
 #define CREATE_TRACE_POINTS
 #include "trace.h"
@@ -84,6 +85,9 @@ static void kvm_riscv_reset_vcpu(struct kvm_vcpu *vcpu)
 	bitmap_zero(vcpu->arch.irqs_pending_mask, KVM_RISCV_VCPU_NR_IRQS);
 
 	kvm_riscv_vcpu_pmu_reset(vcpu);
+
+	if (kvm_to_plf(vcpu->kvm)->vcpu_reset)
+		kvm_to_plf(vcpu->kvm)->vcpu_reset(vcpu);
 
 	vcpu->arch.hfence_head = 0;
 	vcpu->arch.hfence_tail = 0;
@@ -150,6 +154,9 @@ int kvm_arch_vcpu_create(struct kvm_vcpu *vcpu)
 	/* setup performance monitoring */
 	kvm_riscv_vcpu_pmu_init(vcpu);
 
+	if (kvm_to_plf(vcpu->kvm)->vcpu_init)
+		kvm_to_plf(vcpu->kvm)->vcpu_init(vcpu);
+
 	/* Setup VCPU AIA */
 	rc = kvm_riscv_vcpu_aia_init(vcpu);
 	if (rc)
@@ -187,6 +194,9 @@ void kvm_arch_vcpu_destroy(struct kvm_vcpu *vcpu)
 	kvm_riscv_vcpu_timer_deinit(vcpu);
 
 	kvm_riscv_vcpu_pmu_deinit(vcpu);
+
+	if (kvm_to_plf(vcpu->kvm)->vcpu_deinit)
+		kvm_to_plf(vcpu->kvm)->vcpu_deinit(vcpu);
 
 	/* Free unused pages pre-allocated for G-stage page table mappings */
 	kvm_mmu_free_memory_cache(&vcpu->arch.mmu_page_cache);

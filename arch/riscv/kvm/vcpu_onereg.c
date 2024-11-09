@@ -16,6 +16,7 @@
 #include <asm/cpufeature.h>
 #include <asm/kvm_vcpu_vector.h>
 #include <asm/vector.h>
+#include <asm/kvm_vcpu_scr.h>
 
 #define KVM_RISCV_BASE_ISA_MASK		GENMASK(25, 0)
 
@@ -239,6 +240,12 @@ static int kvm_riscv_vcpu_get_reg_config(struct kvm_vcpu *vcpu,
 	case KVM_REG_RISCV_CONFIG_REG(satp_mode):
 		reg_val = satp_mode >> SATP_MODE_SHIFT;
 		break;
+	case KVM_REG_RISCV_CONFIG_REG(enable_scr_pmu):
+		if (kvm_to_plf(vcpu->kvm)->vendor_id == SCR_VENDOR_ID)
+			reg_val = vcpu_to_scr_plf(vcpu)->enable_scr_pmu;
+		else
+			return -ENODEV;
+		break;
 	default:
 		return -ENOENT;
 	}
@@ -345,6 +352,14 @@ static int kvm_riscv_vcpu_set_reg_config(struct kvm_vcpu *vcpu,
 	case KVM_REG_RISCV_CONFIG_REG(satp_mode):
 		if (reg_val != (satp_mode >> SATP_MODE_SHIFT))
 			return -EINVAL;
+		break;
+	case KVM_REG_RISCV_CONFIG_REG(enable_scr_pmu):
+		if (vcpu->arch.ran_atleast_once)
+			return -EBUSY;
+		if (kvm_to_plf(vcpu->kvm)->vendor_id == SCR_VENDOR_ID)
+			vcpu_to_scr_plf(vcpu)->enable_scr_pmu = reg_val;
+		else
+			return -ENODEV;
 		break;
 	default:
 		return -ENOENT;

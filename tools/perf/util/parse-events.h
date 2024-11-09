@@ -200,6 +200,7 @@ struct parse_events_modifier {
 	bool bpf : 1;		/* 'b' */
 	bool user : 1;		/* 'u' */
 	bool kernel : 1;	/* 'k' */
+	bool machine: 1;	/* 'm' */
 	bool hypervisor : 1;	/* 'h' */
 	bool guest : 1;		/* 'G' */
 	bool host : 1;		/* 'H' */

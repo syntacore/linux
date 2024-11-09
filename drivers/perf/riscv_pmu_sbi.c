@@ -78,8 +78,28 @@ static struct attribute_group riscv_pmu_format_group = {
 	.attrs = riscv_arch_formats_attr,
 };
 
+static ssize_t cpus_show(struct device *dev,
+			 struct device_attribute *attr, char *buf)
+{
+	struct riscv_pmu *pmu = to_riscv_pmu(dev_get_drvdata(dev));
+
+	return cpumap_print_to_pagebuf(true, buf, &pmu->supported_cpus);
+}
+
+static DEVICE_ATTR_RO(cpus);
+
+static struct attribute *scr_cache_pmu_cpumask_attrs[] = {
+	&dev_attr_cpus.attr,
+	NULL,
+};
+
+static const struct attribute_group scr_cache_pmu_cpumask_attr_group = {
+	.attrs = scr_cache_pmu_cpumask_attrs,
+};
+
 static const struct attribute_group *riscv_pmu_attr_groups[] = {
 	&riscv_pmu_format_group,
+	&scr_cache_pmu_cpumask_attr_group,
 	NULL,
 };
 
@@ -89,6 +109,9 @@ static int sysctl_perf_user_access __read_mostly = SYSCTL_USER_ACCESS;
 /*
  * RISC-V doesn't have heterogeneous harts yet. This need to be part of
  * per_cpu in case of harts with different pmu counters
+ *
+ * For Syntacore CPUs counters info is
+ * equal for all harts. This part can be kept as is
  */
 static union sbi_pmu_ctr_info *pmu_ctr_list;
 static bool riscv_pmu_use_irq;
@@ -395,6 +418,8 @@ static unsigned long pmu_sbi_get_filter_flags(struct perf_event *event)
 		cflags |= SBI_PMU_CFG_FLAG_SET_UINH | SBI_PMU_CFG_FLAG_SET_SINH;
 	if (event->attr.exclude_guest)
 		cflags |= SBI_PMU_CFG_FLAG_SET_VSINH | SBI_PMU_CFG_FLAG_SET_VUINH;
+	if (event->attr.exclude_machine)
+		cflags |= SBI_PMU_CFG_FLAG_SET_MINH;
 
 	return cflags;
 }
@@ -526,6 +551,7 @@ static int pmu_sbi_event_map(struct perf_event *event, u64 *econfig)
 		ret = pmu_event_find_cache(config);
 		break;
 	case PERF_TYPE_RAW:
+	default:
 		/*
 		 * As per SBI specification, the upper 16 bits must be unused
 		 * for a raw event.
@@ -554,9 +580,6 @@ static int pmu_sbi_event_map(struct perf_event *event, u64 *econfig)
 			*econfig = raw_config_val;
 			break;
 		}
-		break;
-	default:
-		ret = -ENOENT;
 		break;
 	}
 
@@ -1058,6 +1081,9 @@ static int pmu_sbi_starting_cpu(unsigned int cpu, struct hlist_node *node)
 	struct riscv_pmu *pmu = hlist_entry_safe(node, struct riscv_pmu, node);
 	struct cpu_hw_events *cpu_hw_evt = this_cpu_ptr(pmu->hw_events);
 
+	if (!cpumask_test_cpu(cpu, &pmu->supported_cpus))
+		return 0;
+
 	/*
 	 * We keep enabling userspace access to CYCLE, TIME and INSTRET via the
 	 * legacy option but that will be removed in the future.
@@ -1084,6 +1110,11 @@ static int pmu_sbi_starting_cpu(unsigned int cpu, struct hlist_node *node)
 
 static int pmu_sbi_dying_cpu(unsigned int cpu, struct hlist_node *node)
 {
+	struct riscv_pmu *pmu = hlist_entry_safe(node, struct riscv_pmu, node);
+
+	if (!cpumask_test_cpu(cpu, &pmu->supported_cpus))
+		return 0;
+
 	if (riscv_pmu_use_irq) {
 		disable_percpu_irq(riscv_pmu_irq);
 	}
@@ -1097,10 +1128,10 @@ static int pmu_sbi_dying_cpu(unsigned int cpu, struct hlist_node *node)
 	return 0;
 }
 
-static int pmu_sbi_setup_irqs(struct riscv_pmu *pmu, struct platform_device *pdev)
+static int pmu_sbi_setup_irqs(struct cpu_hw_events __percpu *hw_events,
+			      struct platform_device *pdev)
 {
 	int ret;
-	struct cpu_hw_events __percpu *hw_events = pmu->hw_events;
 	struct irq_domain *domain = NULL;
 
 	if (riscv_isa_extension_available(NULL, SSCOFPMF)) {
@@ -1155,6 +1186,9 @@ static int riscv_pm_pmu_notify(struct notifier_block *b, unsigned long cmd,
 	int enabled = bitmap_weight(cpuc->used_hw_ctrs, RISCV_MAX_COUNTERS);
 	struct perf_event *event;
 	int idx;
+
+	if (!cpumask_test_cpu(smp_processor_id(), &rvpmu->supported_cpus))
+		return NOTIFY_DONE;
 
 	if (!enabled)
 		return NOTIFY_OK;
@@ -1327,16 +1361,17 @@ static struct ctl_table sbi_pmu_sysctl_table[] = {
 	},
 };
 
-static int pmu_sbi_device_probe(struct platform_device *pdev)
+static struct riscv_pmu *pmu_sbi_create(struct platform_device *pdev,
+					const char *name,
+					const cpumask_t *cpus, bool homogeneous)
 {
-	struct riscv_pmu *pmu = NULL;
+	struct riscv_pmu *pmu;
 	int ret = -ENODEV;
 	int num_counters;
 
-	pr_info("SBI PMU extension is available\n");
-	pmu = riscv_pmu_alloc();
+	pmu = riscv_pmu_alloc(cpus);
 	if (!pmu)
-		return -ENOMEM;
+		return NULL;
 
 	num_counters = pmu_sbi_find_num_ctrs();
 	if (num_counters < 0) {
@@ -1354,12 +1389,8 @@ static int pmu_sbi_device_probe(struct platform_device *pdev)
 	if (pmu_sbi_get_ctrinfo(num_counters, &cmask))
 		goto out_free;
 
-	ret = pmu_sbi_setup_irqs(pmu, pdev);
-	if (ret < 0) {
-		pr_info("Perf sampling/filtering is not supported as sscof extension is not available\n");
-		pmu->pmu.capabilities |= PERF_PMU_CAP_NO_INTERRUPT;
-		pmu->pmu.capabilities |= PERF_PMU_CAP_NO_EXCLUDE;
-	}
+	if (!homogeneous)
+		pmu->pmu.capabilities |= PERF_PMU_CAP_EXTENDED_HW_TYPE;
 
 	pmu->pmu.attr_groups = riscv_pmu_attr_groups;
 	pmu->pmu.parent = &pdev->dev;
@@ -1375,58 +1406,211 @@ static int pmu_sbi_device_probe(struct platform_device *pdev)
 	pmu->event_mapped = pmu_sbi_event_mapped;
 	pmu->event_unmapped = pmu_sbi_event_unmapped;
 	pmu->csr_index = pmu_sbi_csr_index;
+	pmu->name = name;
 
 	ret = riscv_pm_pmu_register(pmu);
 	if (ret)
-		goto out_unregister;
+		goto out_free;
 
-	ret = perf_pmu_register(&pmu->pmu, "cpu", PERF_TYPE_RAW);
-	if (ret)
-		goto out_unregister;
+	return pmu;
 
-	/* SBI PMU Snapsphot is only available in SBI v2.0 */
-	if (sbi_v2_available) {
+out_free:
+	kfree(pmu);
+	return NULL;
+}
+
+#define HOMOGENEOUS_PMU_NAME "cpu"
+
+typedef const char *(*get_vendor_pmu_name_fn)(int cpuid);
+
+struct pmu_hw_events_quirk {
+	unsigned long mvendorid;
+	get_vendor_pmu_name_fn get_vendor_pmu_name;
+};
+
+#define PMU_HW_EVENT_QUIRK(optmvendorid, get_vendor_pmu_name_fn)   \
+{                                                          \
+	.mvendorid = (optmvendorid),                       \
+	.get_vendor_pmu_name = (get_vendor_pmu_name_fn)    \
+}
+
+static const char *pmu_get_syntacore_name(int cpuid)
+{
+
+#define SCR_COREID(marchid)             (((marchid) >> 12) & 0xf)
+#define SCR_CORECONFIG(mimpid)          (((mimpid) >> 32) & 0xff)
+#define SCR_CORE_CONFIG_SCR9_LITE       2
+
+	unsigned long marchid = riscv_cached_marchid(cpuid);
+	unsigned long mimpid = riscv_cached_mimpid(cpuid);
+	unsigned long coreid = SCR_COREID(marchid);
+	unsigned long coreconfig = SCR_CORECONFIG(mimpid);
+
+	const char *name;
+
+	switch (coreid)	{
+	case 7:
+		name = "scr7";
+		break;
+	case 9:
+		if (coreconfig == SCR_CORE_CONFIG_SCR9_LITE)
+			name = "scr9_lite";
+		else
+			name = "scr9";
+		break;
+	default:
+		name = "scr";
+		break;
+	}
+
+	return name;
+}
+
+struct pmu_hw_events_quirk pmu_hw_events_quirks[] = {
+	/* Syntacore */
+	PMU_HW_EVENT_QUIRK(0x6bb, &pmu_get_syntacore_name),
+
+	/* Sentinel */
+	{ 0 }
+};
+
+static const char *pmu_sbi_get_pmu_name(unsigned long mvendorid, int cpuid)
+{
+	struct pmu_hw_events_quirk *quirk = pmu_hw_events_quirks;
+	const char *vendor_pmu_name = HOMOGENEOUS_PMU_NAME;
+
+	for (; quirk->mvendorid; mvendorid++) {
+		if (quirk->mvendorid == mvendorid) {
+			const char *name = NULL;
+
+			if (quirk->get_vendor_pmu_name)
+				name = quirk->get_vendor_pmu_name(cpuid);
+
+			if (name)
+				vendor_pmu_name = name;
+
+			break;
+		}
+	}
+
+	return vendor_pmu_name;
+}
+
+static int pmu_sbi_device_probe(struct platform_device *pdev)
+{
+	struct riscv_pmu *pmus[NR_CPUS] = { NULL };
+	cpumask_t cpu_need_pmu_mask;
+	const cpumask_t *cpus = cpu_present_mask;
+	bool homogeneous;
+	int cur_cpu;
+	int pmus_cnt = 0;
+	int cnt;
+	bool all;
+	int ret;
+
+	cpumask_copy(&cpu_need_pmu_mask, cpus);
+	while ((cur_cpu = cpumask_first(&cpu_need_pmu_mask)) < nr_cpu_ids) {
+		cpumask_t cpu_same_pmu_mask = { CPU_BITS_NONE };
+		unsigned long cur_mvendorid = riscv_cached_mvendorid(cur_cpu);
+		const char *cur_name = pmu_sbi_get_pmu_name(cur_mvendorid, cur_cpu);
 		int cpu;
 
-		ret = pmu_sbi_snapshot_alloc(pmu);
+		for_each_cpu(cpu, &cpu_need_pmu_mask) {
+			unsigned long mvendorid = riscv_cached_mvendorid(cpu);
+			const char *name = pmu_sbi_get_pmu_name(mvendorid, cpu);
+
+			if (mvendorid == cur_mvendorid && !strcmp(cur_name, name))
+				cpumask_set_cpu(cpu, &cpu_same_pmu_mask);
+		}
+
+		all = !cpumask_andnot(&cpu_need_pmu_mask, &cpu_need_pmu_mask, &cpu_same_pmu_mask);
+		homogeneous = !pmus_cnt && all;
+
+		WARN_ON_ONCE(!homogeneous && !strcmp(cur_name, HOMOGENEOUS_PMU_NAME));
+
+		if (homogeneous)
+			/* Common PMU for all harts */
+			pmus[pmus_cnt] = pmu_sbi_create(pdev, cur_name,	&cpu_same_pmu_mask, true);
+		else
+			pmus[pmus_cnt] = pmu_sbi_create(pdev, cur_name, &cpu_same_pmu_mask, false);
+
+		if (!pmus[pmus_cnt]) {
+			ret = -EFAULT;
+			goto free_pmus;
+		}
+
+		pmus_cnt++;
+	}
+
+	ret = pmu_sbi_setup_irqs(&hw_events, pdev);
+	if (ret < 0) {
+		pr_info("Perf sampling is not supported as sscof extension is not available\n");
+		for (cnt = 0; cnt < pmus_cnt; cnt++)
+			pmus[cnt]->pmu.capabilities |= PERF_PMU_CAP_NO_INTERRUPT;
+	}
+
+	for (cnt = 0; cnt < pmus_cnt; cnt++) {
+		struct riscv_pmu *pmu = pmus[cnt];
+
+		ret = cpuhp_state_add_instance(CPUHP_AP_PERF_RISCV_STARTING, &pmu->node);
 		if (ret)
-			goto out_unregister;
+			goto unreg_pmus;
 
-		cpu = get_cpu();
-		ret = pmu_sbi_snapshot_setup(pmu, cpu);
-		put_cpu();
+		/* TODO: adapt PMU snapshots to pmus */
+#if 0
+		/* SBI PMU Snapsphot is only available in SBI v2.0 */
+		if (sbi_v2_available) {
+			int cpu;
 
+			ret = pmu_sbi_snapshot_alloc(pmu);
+			if (ret)
+				goto out_unregister;
+
+			cpu = get_cpu();
+			ret = pmu_sbi_snapshot_setup(pmu, cpu);
+			put_cpu();
+
+			if (ret) {
+				/* Snapshot is an optional feature. Continue if not available */
+				pmu_sbi_snapshot_free(pmu);
+			} else {
+				pr_info("SBI PMU snapshot detected\n");
+				/*
+				 * We enable it once here for the boot cpu. If snapshot shmem setup
+				 * fails during cpu hotplug process, it will fail to start the cpu
+				 * as we can not handle hetergenous PMUs with different snapshot
+				 * capability.
+				 */
+				static_branch_enable(&sbi_pmu_snapshot_available);
+			}
+			put_cpu();
+		}
+#endif
+
+		ret = perf_pmu_register(&pmu->pmu, pmu->name, homogeneous ? PERF_TYPE_RAW : -1);
 		if (ret) {
-			/* Snapshot is an optional feature. Continue if not available */
-			pmu_sbi_snapshot_free(pmu);
-		} else {
-			pr_info("SBI PMU snapshot detected\n");
-			/*
-			 * We enable it once here for the boot cpu. If snapshot shmem setup
-			 * fails during cpu hotplug process, it will fail to start the cpu
-			 * as we can not handle hetergenous PMUs with different snapshot
-			 * capability.
-			 */
-			static_branch_enable(&sbi_pmu_snapshot_available);
+			cpuhp_state_remove_instance(CPUHP_AP_PERF_RISCV_STARTING, &pmu->node);
+			goto unreg_pmus;
 		}
 	}
 
 	register_sysctl("kernel", sbi_pmu_sysctl_table);
-
-	ret = cpuhp_state_add_instance(CPUHP_AP_PERF_RISCV_STARTING, &pmu->node);
-	if (ret)
-		goto out_unregister;
 
 	/* Asynchronously check which standard events are available */
 	schedule_work(&check_std_events_work);
 
 	return 0;
 
-out_unregister:
-	riscv_pmu_destroy(pmu);
+unreg_pmus:
+	for (; cnt >= 1; cnt--) {
+		cpuhp_state_remove_instance(CPUHP_AP_PERF_RISCV_STARTING, &pmus[cnt - 1]->node);
+		riscv_pmu_destroy(pmus[cnt - 1]);
+	}
 
-out_free:
-	kfree(pmu);
+free_pmus:
+	for (cnt = 0; cnt < pmus_cnt; cnt++)
+		kfree(pmus[cnt]);
+
 	return ret;
 }
 

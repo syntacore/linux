@@ -206,6 +206,7 @@ SYM_CODE_START(_start_kernel)
 	/* Reset all registers except ra, a0, a1 */
 	call reset_regs
 
+#ifndef CONFIG_SKIP_PMP_SETUP
 	/*
 	 * Setup a PMP to permit access to all of memory.  Some machines may
 	 * not implement PMPs, so we set up a quick trap handler to just skip
@@ -220,6 +221,7 @@ SYM_CODE_START(_start_kernel)
 	csrw CSR_PMPCFG0, a0
 .align 2
 .Lpmp_done:
+#endif
 
 	/*
 	 * The hartid in a0 is expected later on, and we have no firmware

@@ -43,14 +43,10 @@ const char *const powerpc_triplets[] = {
 	NULL
 };
 
-const char *const riscv32_triplets[] = {
+const char *const riscv_triplets[] = {
 	"riscv32-unknown-linux-gnu-",
 	"riscv32-linux-android-",
 	"riscv32-linux-gnu-",
-	NULL
-};
-
-const char *const riscv64_triplets[] = {
 	"riscv64-unknown-linux-gnu-",
 	"riscv64-linux-android-",
 	"riscv64-linux-gnu-",
@@ -178,10 +174,8 @@ static int perf_env__lookup_binutils_path(struct perf_env *env,
 		path_list = arm64_triplets;
 	else if (!strcmp(arch, "powerpc"))
 		path_list = powerpc_triplets;
-	else if (!strcmp(arch, "riscv32"))
-		path_list = riscv32_triplets;
-	else if (!strcmp(arch, "riscv64"))
-		path_list = riscv64_triplets;
+	else if (!strcmp(arch, "riscv"))
+		path_list = riscv_triplets;
 	else if (!strcmp(arch, "sh"))
 		path_list = sh_triplets;
 	else if (!strcmp(arch, "s390"))

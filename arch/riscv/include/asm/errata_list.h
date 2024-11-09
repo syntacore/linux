@@ -28,6 +28,11 @@
 #define	ERRATA_THEAD_NUMBER 2
 #endif
 
+#ifdef CONFIG_ERRATA_SCR
+#define        ERRATA_SCR_CMO 0
+#define        ERRATA_SCR_NUMBER 1
+#endif
+
 #ifdef __ASSEMBLY__
 
 #define ALT_INSN_FAULT(x)						\

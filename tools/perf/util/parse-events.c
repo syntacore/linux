@@ -1749,10 +1749,11 @@ static int parse_events__modifier_list(struct parse_events_state *parse_state,
 		/* Translate modifiers into the equivalent evsel excludes. */
 		int eu = group ? evsel->core.attr.exclude_user : 0;
 		int ek = group ? evsel->core.attr.exclude_kernel : 0;
+		int em = group ? evsel->core.attr.exclude_machine : 0;
 		int eh = group ? evsel->core.attr.exclude_hv : 0;
 		int eH = group ? evsel->core.attr.exclude_host : 0;
 		int eG = group ? evsel->core.attr.exclude_guest : 0;
-		int exclude = eu | ek | eh;
+		int exclude = eu | ek | eh | em;
 		int exclude_GH = group ? evsel->exclude_GH : 0;
 
 		if (mod.precise) {
@@ -1761,19 +1762,24 @@ static int parse_events__modifier_list(struct parse_events_state *parse_state,
 		}
 		if (mod.user) {
 			if (!exclude)
-				exclude = eu = ek = eh = 1;
+				exclude = eu = ek = eh = em = 1;
 			if (!exclude_GH && !perf_guest)
 				eG = 1;
 			eu = 0;
 		}
 		if (mod.kernel) {
 			if (!exclude)
-				exclude = eu = ek = eh = 1;
+				exclude = eu = ek = eh = em = 1;
 			ek = 0;
+		}
+		if (mod.machine) {
+			if (!exclude)
+				exclude = eu = ek = eh = em = 1;
+			em = 0;
 		}
 		if (mod.hypervisor) {
 			if (!exclude)
-				exclude = eu = ek = eh = 1;
+				exclude = eu = ek = eh = em = 1;
 			eh = 0;
 		}
 		if (mod.guest) {
@@ -1788,6 +1794,7 @@ static int parse_events__modifier_list(struct parse_events_state *parse_state,
 		}
 		evsel->core.attr.exclude_user   = eu;
 		evsel->core.attr.exclude_kernel = ek;
+		evsel->core.attr.exclude_machine = em;
 		evsel->core.attr.exclude_hv     = eh;
 		evsel->core.attr.exclude_host   = eH;
 		evsel->core.attr.exclude_guest  = eG;

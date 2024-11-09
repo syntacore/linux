@@ -152,6 +152,7 @@ config RISCV
 	select HAVE_FUNCTION_ERROR_INJECTION
 	select HAVE_GCC_PLUGINS
 	select HAVE_GENERIC_VDSO if MMU && 64BIT
+	select HAVE_HW_BREAKPOINT if !RISCV_M_MODE && PERF_EVENTS
 	select HAVE_IRQ_TIME_ACCOUNTING
 	select HAVE_KERNEL_BZIP2 if !XIP_KERNEL && !EFI_ZBOOT
 	select HAVE_KERNEL_GZIP if !XIP_KERNEL && !EFI_ZBOOT
@@ -165,6 +166,7 @@ config RISCV
 	select HAVE_KRETPROBES if !XIP_KERNEL
 	# https://github.com/ClangBuiltLinux/linux/issues/1881
 	select HAVE_LD_DEAD_CODE_DATA_ELIMINATION if !LD_IS_LLD
+	select HAVE_MIXED_BREAKPOINTS_REGS if HAVE_HW_BREAKPOINT
 	select HAVE_MOVE_PMD
 	select HAVE_MOVE_PUD
 	select HAVE_PAGE_SIZE_4KB
@@ -284,6 +286,7 @@ config MMU
 
 config PAGE_OFFSET
 	hex
+	default PHYS_RAM_BASE if !MMU && PHYS_RAM_BASE_FIXED
 	default 0x80000000 if !MMU && RISCV_M_MODE
 	default 0x80200000 if !MMU
 	default 0xc0000000 if 32BIT
@@ -1144,6 +1147,18 @@ config BUILTIN_DTB_SOURCE
 	  DTS file path (without suffix, relative to arch/riscv/boot/dts)
 	  for the DTS file that will be used to produce the DTB linked into the
 	  kernel.
+
+config SKIP_PMP_SETUP
+	bool "Skip PMP setup on boot in M-mode" if COMPILE_TEST
+	depends on RISCV_M_MODE
+	default n
+	help
+	  Skip PMP setup when booting NOMMU Linux in M-mode. Memory protection
+	  depends on hardware. Some hardware platforms may provide additional
+	  PMP flags. Others may implement custom memory protection blocks. In
+	  such cases memory protection can be configured in the first stage
+	  bootloader. Use this flag to keep existing memory protection settings
+	  configured by the bootloader.
 
 endmenu # "Boot options"
 
