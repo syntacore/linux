@@ -1,0 +1,32 @@
+// SPDX-License-Identifier: GPL-2.0
+/*
+ *  Copyright (C) 2026 Syntacore
+ */
+
+/dts-v1/;
+
+#define SYSCLK 50000000
+#define CPUCLK 80000000
+
+#include "scr9.dtsi"
+#include "vcu118_l3.dtsi"
+
+/ {
+	model = "IPDEV VCU118 SCR9 L3 prototype";
+
+	aliases {
+		ethernet = &axi_ethernet_0;
+		serial = &uart0;
+	};
+
+	chosen {
+		bootargs = "earlycon=sbi console=ttyS0,115200 initrdmem=0x430000000,512M net.ifnames=0 swiotlb=noforce";
+		stdout-path = "serial";
+
+	};
+
+	cpus {
+		timebase-frequency = <1000000>;
+
+	};
+};

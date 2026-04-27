@@ -1,0 +1,286 @@
+// SPDX-License-Identifier: GPL-2.0
+/*
+ *  Copyright (C) 2026 Syntacore
+ */
+
+#include <dt-bindings/interrupt-controller/irq.h>
+
+#include "scr_pma.h"
+#include "scr_pmp.h"
+
+/ {
+	compatible = "syntacore,scr_sdk";
+	#address-cells = <2>;
+	#size-cells = <2>;
+
+	chosen {
+
+		opensbi-domains {
+			compatible = "opensbi,domain,config";
+
+			mcfg_reg: mcfg_reg {
+				compatible = "opensbi,domain,memregion";
+				base = <0xffffff 0xf0040000>;
+				order = <13>;
+				mmio;
+			};
+
+			dram_reg: dram_reg {
+				compatible = "opensbi,domain,memregion";
+				base = <0x0 0x0>;
+				order = <32>;
+			};
+
+			dma_reg: dma_reg {
+				compatible = "opensbi,domain,memregion";
+				base = <0x00 0xff000000>;
+				order = <24>;
+				mmio;
+			};
+
+			mmio_reg: mmio_reg {
+				compatible = "opensbi,domain,memregion";
+				base = <0xffffff 0xff000000>;
+				devices = <&uart0>;
+				order = <23>;
+				mmio;
+			};
+			plic_reg: plic_reg {
+				compatible = "opensbi,domain,memregion";
+				base = <0xffffff 0xfe000000>;
+				devices = <&plic>;
+				order = <25>;
+				mmio;
+			};
+
+			tdomain: trusted-domain {
+				compatible = "opensbi,domain,instance";
+				possible-harts = <
+					&cpu0
+					&cpu1
+					&cpu2
+					&cpu3
+#if SCR_OCTA_CORE
+					&cpu4
+					&cpu5
+					&cpu6
+					&cpu7
+#endif
+				>;
+
+				regions =
+					<&dma_reg (SCR_PMP_MMODE_READ | SCR_PMP_MMODE_WRITE |
+						   SCR_PMP_SUMODE_READ | SCR_PMP_SUMODE_WRITE |
+						   SCR_PMA_UNC)>,
+					<&dram_reg (SCR_PMP_MMODE_READ | SCR_PMP_MMODE_WRITE | SCR_PMP_MMODE_EXECUTE |
+						    SCR_PMP_SUMODE_READ | SCR_PMP_SUMODE_WRITE | SCR_PMP_SUMODE_EXECUTE)>,
+					<&mcfg_reg (SCR_PMP_MMODE_READ | SCR_PMP_MMODE_WRITE |
+						    SCR_PMP_SUMODE_READ |
+						    SCR_PMA_MMIO)>,
+					<&mmio_reg (SCR_PMP_MMODE_READ | SCR_PMP_MMODE_WRITE |
+						    SCR_PMP_SUMODE_READ | SCR_PMP_SUMODE_WRITE |
+						    SCR_PMA_UNC)>,
+					<&plic_reg (SCR_PMP_MMODE_READ | SCR_PMP_MMODE_WRITE |
+						    SCR_PMP_SUMODE_READ | SCR_PMP_SUMODE_WRITE |
+						    SCR_PMA_UNC)>;
+				system-reset-allowed;
+				system-suspend-allowed;
+			};
+		};
+
+		scr-root-domain {
+			#address-cells = <2>;
+			#size-cells = <2>;
+
+			compatible = "syntacore,root-domain";
+
+			ocram@ffffffffffff0000 {
+				reg = <0xffffffff 0xffff0000 0x00 0x8000>;
+				flags = <(SCR_PMP_MMODE_READ | SCR_PMP_MMODE_WRITE)>;
+			};
+		};
+	};
+
+	memory@0 {
+		reg = <0x00 0x00 0x00 0xff000000>;
+		device_type = "memory";
+	};
+
+	reserved-memory {
+		ranges;
+		#address-cells = <2>;
+		#size-cells = <2>;
+
+		linux,dma@0 {
+			compatible = "shared-dma-pool";
+			reg = <0x00 0xff000000 0x00 0x1000000>;
+			linux,dma-default;
+			no-map;
+		};
+	};
+
+	clocks {
+		sysclk: clk {
+			compatible = "fixed-clock";
+			#clock-cells = <0x00>;
+			clock-frequency = <SYSCLK>;
+		};
+	};
+
+	firmware {
+		syntacore,bldid = "0000000000000000";
+	};
+
+	scr-fpga-reg {
+		compatible = "syntacore,fpga-reg-v1";
+		syntacore,buildid-reg = <0xffffff 0xff000000>;
+		syntacore,sysclk-reg = <0xffffff 0xff001000>;
+		syntacore,clsclk-reg = <0xffffff 0xff001000>;
+	};
+
+	soc {
+		compatible = "simple-bus";
+		device_type = "soc";
+		ranges;
+		#address-cells = <2>;
+		#size-cells = <2>;
+		bus-frequency = <SYSCLK>;
+		dma-noncoherent;
+
+		cluster_bus: cluster_bus {
+			compatible = "simple-bus";
+			ranges;
+			#address-cells = <2>;
+			#size-cells = <2>;
+
+			iccm: iccm {
+				compatible = "syntacore,iccm";
+				mbox-mapping = <
+					&cpu0 0
+					&cpu1 1
+					&cpu2 2
+					&cpu3 3
+#if SCR_OCTA_CORE
+					&cpu4 4
+					&cpu5 5
+					&cpu6 6
+					&cpu7 7
+#endif
+				>;
+			};
+
+			mtimer: timer@fffffff0040000 {
+				compatible = "syntacore,mtimer";
+				reg = <0xffffff 0xf0040000 0 0x1000>;
+				clock-frequency = <SYSCLK>;
+				interrupts-extended = <
+					&cpu0_intc 7
+					&cpu1_intc 7
+					&cpu2_intc 7
+					&cpu3_intc 7
+#if SCR_OCTA_CORE
+					&cpu4_intc 7
+					&cpu5_intc 7
+					&cpu6_intc 7
+					&cpu7_intc 7
+#endif
+				>;
+			};
+
+			plic: interrupt-controller@fffffffe000000 {
+				compatible = "syntacore,plic";
+				reg = <0xffffff 0xfe000000 0 0x1000000>;
+				reg-names = "control";
+
+				#interrupt-cells = <2>;
+				interrupt-controller;
+				interrupts-extended = <
+					&cpu0_intc 11 &cpu0_intc 9
+					&cpu1_intc 11 &cpu1_intc 9
+					&cpu2_intc 11 &cpu2_intc 9
+					&cpu3_intc 11 &cpu3_intc 9
+#if SCR_OCTA_CORE
+					&cpu4_intc 11 &cpu4_intc 9
+					&cpu5_intc 11 &cpu5_intc 9
+					&cpu6_intc 11 &cpu6_intc 9
+					&cpu7_intc 11 &cpu7_intc 9
+#endif
+				>;
+
+				riscv,ndev = <16>;
+				riscv,max-priority = <7>;
+			};
+
+			scr_l2_cache: cache-controller@fffffff0041000 {
+				compatible = "syntacore,l2-cache";
+				reg = <0xffffff 0xf0041000 0 0x1000>;
+			};
+		};
+
+		axi_ethernet_0: ethernet@ffffffff040000 {
+			compatible = "xlnx,axi-ethernet-1.00.a";
+			reg = <0xffffff 0xff040000 0x00 0x40000>;
+			device_type = "network";
+
+			local-mac-address = [00 0a 35 04 D0 99];
+
+			phy-handle = <&axi_ethernet_0_phy_3>;
+			pcs-handle = <&axi_ethernet_0_phy_4>;
+			phy-mode = "sgmii";
+			managed = "in-band-status";
+
+			xlnx,rxmem = <0x1000>;
+			xlnx,rxcsum = <0x2>;
+			xlnx,txcsum = <0x2>;
+
+			axistream-connected = <&axi_ethernet_0_dma>;
+			axistream-control-connected = <&axi_ethernet_0_dma>;
+
+			mdio {
+				#address-cells = <1>;
+				#size-cells = <0>;
+
+				axi_ethernet_0_phy_4: phy@4 {
+					compatible = "ethernet-phy-id0174.0c00";
+					reg = <4>;
+				};
+
+				axi_ethernet_0_phy_3: phy@3 {
+					compatible = "ethernet-phy-ieee802.3-c22";
+					reg = <3>;
+					ti,fifo-depth = <0x3>;
+					ti,sgmii-ref-clock-output-enable = <1>;
+					ti,dp83867-rxctrl-strap-quirk = <1>;
+				};
+			};
+		};
+
+
+		axi_ethernet_0_dma: dma@ffffffff080000 {
+			compatible = "xlnx,eth-dma";
+			reg = <0xffffff 0xff080000 0x00 0x10000>;
+			#dma-cells = <1>;
+			clock-names = "s_axi_lite_aclk";
+			axistream-connected = <&axi_ethernet_0>;
+			axistream-control-connected = <&axi_ethernet_0>;
+			xlnx,include-dre;
+			interrupt-parent = <&plic>;
+			interrupts = <3 IRQ_TYPE_LEVEL_HIGH>, <2 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&sysclk>;
+			clock-frequency = <SYSCLK>;
+		};
+
+		uart0: serial@ffffffff010000 {
+			compatible = "ns16550a";
+			reg = <0xffffff 0xff010000 0x00 0x1000>;
+			reg-io-width = <4>;
+			reg-shift = <2>;
+			current-speed = <115200>;
+			interrupt-parent = <&plic>;
+			interrupts = <1 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&sysclk>;
+			clock-frequency = <SYSCLK>;
+		};
+	};
+};
+

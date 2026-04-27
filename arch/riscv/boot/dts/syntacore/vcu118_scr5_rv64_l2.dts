@@ -1,0 +1,39 @@
+// SPDX-License-Identifier: GPL-2.0
+/*
+ *  Copyright (C) 2026 Syntacore
+ */
+
+/dts-v1/;
+
+#define SYSCLK 65000000
+
+#include "scr5_rv64.dtsi"
+#include "vcu118_l2.dtsi"
+
+/ {
+	model = "IPDEV VCU118 SCR5 RV64 L2 prototype";
+
+	aliases {
+		ethernet = &axi_ethernet_0;
+		serial = &uart0;
+	};
+
+	chosen {
+		bootargs = "earlycon=sbi console=ttyS0,115200 initrdmem=0x30000000,512M net.ifnames=0 swiotlb=noforce";
+		stdout-path = "serial";
+
+		/delete-node/ scr-root-domain;
+	};
+
+	cpus {
+		timebase-frequency = <1000000>;
+	};
+
+	scr-fpga-reg {
+		compatible = "syntacore,fpga-reg-v1";
+		syntacore,buildid-reg = <0xffffff 0xff001000>;
+		syntacore,sysclk-reg = <0xffffff 0xff002000>;
+		syntacore,clsclk-reg = <0xffffff 0xff002000>;
+	};
+};
+

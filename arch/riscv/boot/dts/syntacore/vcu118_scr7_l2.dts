@@ -1,0 +1,31 @@
+// SPDX-License-Identifier: GPL-2.0
+/*
+ *  Copyright (C) 2026 Syntacore
+ */
+
+/dts-v1/;
+
+#define SCR_OCTA_CORE 1
+#define SYSCLK 50000000
+
+#include "scr7.dtsi"
+#include "vcu118_l2.dtsi"
+
+/ {
+	model = "IPDEV VCU118 SCR7 L2 prototype";
+
+	aliases {
+		ethernet = &axi_ethernet_0;
+		serial = &uart0;
+	};
+
+	chosen {
+		bootargs = "earlycon=sbi console=ttyS0,115200 initrdmem=0x30000000,512M net.ifnames=0 swiotlb=noforce";
+		stdout-path = "serial";
+	};
+
+	cpus {
+		timebase-frequency = <1000000>;
+	};
+};
+

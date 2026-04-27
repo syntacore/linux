@@ -1,0 +1,339 @@
+// SPDX-License-Identifier: GPL-2.0
+/*
+ *  Copyright (C) 2026 Syntacore
+ */
+
+#define MHPMCOUNTER_BITMAP 0xFFFFFFF8
+
+/ {
+
+	cpus {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		cpu0: cpu@0 {
+			reg = <0>;
+			device_type = "cpu";
+			status = "okay";
+			next-level-cache = <&l2>;
+			compatible = "syntacore,scr7", "riscv";
+			riscv,isa = "rv64imafdc_zba_zbb_zbc_zbs_sscofpmf";
+			riscv,isa-base = "rv64i";
+			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "zba", "zbb", "zbc", "zbs", "sscofpmf";
+			mmu-type = "riscv,sv39";
+			d-cache-block-size = <16>;
+			d-cache-sets = <256>;
+			d-cache-size = <32768>;
+			i-cache-block-size = <16>;
+			i-cache-sets = <256>;
+			i-cache-size = <32768>;
+			riscv,cbom-block-size = <32>;
+			opensbi-domain = <&tdomain>;
+			clock-frequency = <SYSCLK>;
+
+			cpu0_intc: interrupt-controller {
+				compatible = "riscv,cpu-intc";
+				interrupt-controller;
+				#interrupt-cells = <1>;
+				#address-cells = <0>;
+			};
+		};
+
+		cpu1: cpu@1 {
+			reg = <1>;
+			device_type = "cpu";
+			status = "okay";
+			next-level-cache = <&l2>;
+			compatible = "syntacore,scr7", "riscv";
+			riscv,isa = "rv64imafdc_zba_zbb_zbc_zbs_sscofpmf";
+			riscv,isa-base = "rv64i";
+			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "zba", "zbb", "zbc", "zbs", "sscofpmf";
+			mmu-type = "riscv,sv39";
+			d-cache-block-size = <16>;
+			d-cache-sets = <256>;
+			d-cache-size = <32768>;
+			i-cache-block-size = <16>;
+			i-cache-sets = <256>;
+			i-cache-size = <32768>;
+			riscv,cbom-block-size = <32>;
+			opensbi-domain = <&tdomain>;
+			clock-frequency = <SYSCLK>;
+
+			cpu1_intc: interrupt-controller {
+				compatible = "riscv,cpu-intc";
+				interrupt-controller;
+				#interrupt-cells = <1>;
+				#address-cells = <0>;
+			};
+		};
+
+		cpu2: cpu@2 {
+			reg = <2>;
+			device_type = "cpu";
+			status = "okay";
+			next-level-cache = <&l2>;
+			compatible = "syntacore,scr7", "riscv";
+			riscv,isa = "rv64imafdc_zba_zbb_zbc_zbs_sscofpmf";
+			riscv,isa-base = "rv64i";
+			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "zba", "zbb", "zbc", "zbs", "sscofpmf";
+			mmu-type = "riscv,sv39";
+			d-cache-block-size = <16>;
+			d-cache-sets = <256>;
+			d-cache-size = <32768>;
+			i-cache-block-size = <16>;
+			i-cache-sets = <256>;
+			i-cache-size = <32768>;
+			riscv,cbom-block-size = <32>;
+			opensbi-domain = <&tdomain>;
+			clock-frequency = <SYSCLK>;
+
+			cpu2_intc: interrupt-controller {
+				compatible = "riscv,cpu-intc";
+				interrupt-controller;
+				#interrupt-cells = <1>;
+				#address-cells = <0>;
+			};
+		};
+
+		cpu3: cpu@3 {
+			reg = <3>;
+			device_type = "cpu";
+			status = "okay";
+			next-level-cache = <&l2>;
+			compatible = "syntacore,scr7", "riscv";
+			riscv,isa = "rv64imafdc_zba_zbb_zbc_zbs_sscofpmf";
+			riscv,isa-base = "rv64i";
+			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "zba", "zbb", "zbc", "zbs", "sscofpmf";
+			mmu-type = "riscv,sv39";
+			d-cache-block-size = <16>;
+			d-cache-sets = <256>;
+			d-cache-size = <32768>;
+			i-cache-block-size = <16>;
+			i-cache-sets = <256>;
+			i-cache-size = <32768>;
+			riscv,cbom-block-size = <32>;
+			opensbi-domain = <&tdomain>;
+			clock-frequency = <SYSCLK>;
+
+			cpu3_intc: interrupt-controller {
+				compatible = "riscv,cpu-intc";
+				interrupt-controller;
+				#interrupt-cells = <1>;
+				#address-cells = <0>;
+			};
+		};
+
+		cpu4: cpu@4 {
+			reg = <4>;
+			device_type = "cpu";
+			status = "okay";
+			next-level-cache = <&l2>;
+			compatible = "syntacore,scr7", "riscv";
+			riscv,isa = "rv64imafdc_zba_zbb_zbc_zbs_sscofpmf";
+			riscv,isa-base = "rv64i";
+			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "zba", "zbb", "zbc", "zbs", "sscofpmf";
+			mmu-type = "riscv,sv39";
+			d-cache-block-size = <16>;
+			d-cache-sets = <256>;
+			d-cache-size = <32768>;
+			i-cache-block-size = <16>;
+			i-cache-sets = <256>;
+			i-cache-size = <32768>;
+			riscv,cbom-block-size = <32>;
+			opensbi-domain = <&tdomain>;
+			clock-frequency = <SYSCLK>;
+
+			cpu4_intc: interrupt-controller {
+				compatible = "riscv,cpu-intc";
+				interrupt-controller;
+				#interrupt-cells = <1>;
+				#address-cells = <0>;
+			};
+		};
+
+		cpu5: cpu@5 {
+			reg = <5>;
+			device_type = "cpu";
+			status = "okay";
+			next-level-cache = <&l2>;
+			compatible = "syntacore,scr7", "riscv";
+			riscv,isa = "rv64imafdc_zba_zbb_zbc_zbs_sscofpmf";
+			riscv,isa-base = "rv64i";
+			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "zba", "zbb", "zbc", "zbs", "sscofpmf";
+			mmu-type = "riscv,sv39";
+			d-cache-block-size = <16>;
+			d-cache-sets = <256>;
+			d-cache-size = <32768>;
+			i-cache-block-size = <16>;
+			i-cache-sets = <256>;
+			i-cache-size = <32768>;
+			riscv,cbom-block-size = <32>;
+			opensbi-domain = <&tdomain>;
+			clock-frequency = <SYSCLK>;
+
+			cpu5_intc: interrupt-controller {
+				compatible = "riscv,cpu-intc";
+				interrupt-controller;
+				#interrupt-cells = <1>;
+				#address-cells = <0>;
+			};
+		};
+
+		cpu6: cpu@6 {
+			reg = <6>;
+			device_type = "cpu";
+			status = "okay";
+			next-level-cache = <&l2>;
+			compatible = "syntacore,scr7", "riscv";
+			riscv,isa = "rv64imafdc_zba_zbb_zbc_zbs_sscofpmf";
+			riscv,isa-base = "rv64i";
+			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "zba", "zbb", "zbc", "zbs", "sscofpmf";
+			mmu-type = "riscv,sv39";
+			d-cache-block-size = <16>;
+			d-cache-sets = <256>;
+			d-cache-size = <32768>;
+			i-cache-block-size = <16>;
+			i-cache-sets = <256>;
+			i-cache-size = <32768>;
+			riscv,cbom-block-size = <32>;
+			opensbi-domain = <&tdomain>;
+			clock-frequency = <SYSCLK>;
+
+			cpu6_intc: interrupt-controller {
+				compatible = "riscv,cpu-intc";
+				interrupt-controller;
+				#interrupt-cells = <1>;
+				#address-cells = <0>;
+			};
+		};
+
+		cpu7: cpu@7 {
+			reg = <7>;
+			device_type = "cpu";
+			status = "okay";
+			next-level-cache = <&l2>;
+			compatible = "syntacore,scr7", "riscv";
+			riscv,isa = "rv64imafdc_zba_zbb_zbc_zbs_sscofpmf";
+			riscv,isa-base = "rv64i";
+			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "zba", "zbb", "zbc", "zbs", "sscofpmf";
+			mmu-type = "riscv,sv39";
+			d-cache-block-size = <16>;
+			d-cache-sets = <256>;
+			d-cache-size = <32768>;
+			i-cache-block-size = <16>;
+			i-cache-sets = <256>;
+			i-cache-size = <32768>;
+			riscv,cbom-block-size = <32>;
+			opensbi-domain = <&tdomain>;
+			clock-frequency = <SYSCLK>;
+
+			cpu7_intc: interrupt-controller {
+				compatible = "riscv,cpu-intc";
+				interrupt-controller;
+				#interrupt-cells = <1>;
+				#address-cells = <0>;
+			};
+		};
+
+		l2: l2-cache {
+			compatible = "cache";
+			cache-unified;
+			cache-size = <0x20000>;
+			cache-sets = <256>;
+			cache-block-size = <64>;
+			cache-level = <2>;
+		};
+	};
+
+	pmu: pmu {
+		compatible = "riscv,pmu";
+		interrupts-extended = <
+			&cpu0_intc 13
+			&cpu1_intc 13
+			&cpu2_intc 13
+			&cpu3_intc 13
+			&cpu4_intc 13
+			&cpu5_intc 13
+			&cpu6_intc 13
+			&cpu7_intc 13
+		>;
+
+		/*
+		 * Mapping between a range of events and all the MHPMCOUNTERx in a bitmap format
+		 * that can be used to monitor these range of events.
+		 * First column: starting event ID
+		 * Second column: end event ID
+		 * Third column: bitmap of all the MHPMCOUNTERx
+		 */
+		riscv,event-to-mhpmcounters =
+			<0x01 0x06 MHPMCOUNTER_BITMAP>,			/* GEN_CYC, GEN_INST, L1I_HIT, L1I_MISS, PRD_BRANCH, PRD_BR_MIS */
+			<0x08 0x09 MHPMCOUNTER_BITMAP>,			/* EXE_ST_ISS, EXE_BE_IDLE */
+			<0x10000 0x10001 MHPMCOUNTER_BITMAP>,		/* L1D_LD, L1D_MISS */
+			<0x10004 0x10005 MHPMCOUNTER_BITMAP>,		/* L1D_PREF_HIT, L1D_PREF_MISS*/
+			<0x10008 0x10009 MHPMCOUNTER_BITMAP>,		/* L1I_HIT, L1I_MISS */
+			<0x1000c 0x1000d MHPMCOUNTER_BITMAP>,		/* L1D_PF_REQ, L1I_PREF_MISS */
+			<0x10018 0x10019 MHPMCOUNTER_BITMAP>,		/* L1D_TLB_ACCESS, L1D_TLB_MISS */
+			<0x10028 0x10029 MHPMCOUNTER_BITMAP>;		/* PRD_BRANCH, PRD_BR_MIS */
+
+		/*
+		 * Mapping between a PMU event and the event selector value.
+		 * First column: event index
+		 * Second/third column: event selector value
+		 */
+		riscv,event-to-mhpmevent =
+			<0x01 0x00000000 0x0000001>,	/* SBI_PMU_HW_CPU_CYCLES -> GEN_CYC */
+			<0x02 0x00000000 0x0000021>,	/* SBI_PMU_HW_INSTRUCTIONS -> GEN_INST */
+			<0x03 0x00000000 0x0000005>,	/* SBI_PMU_HW_CACHE_REFERENCES -> L1D_HIT */
+			<0x04 0x00000000 0x0000015>,	/* SBI_PMU_HW_CACHE_MISSES -> L1D_MISS */
+			<0x05 0x00000000 0x0000012>,	/* SBI_PMU_HW_BRANCH_INSTRUCTIONS -> PRD_BRANCH */
+			<0x06 0x00000000 0x0000092>,	/* SBI_PMU_HW_BRANCH_MISSES -> PRD_BR_MIS */
+			<0x08 0x00000000 0x0000083>,	/* SBI_PMU_HW_STALLED_CYCLES_FRONTEND -> EXE_BE_IDLE */
+			<0x09 0x00000000 0x00000e3>,	/* SBI_PMU_HW_STALLED_CYCLES_BACKEND -> EXE_ST_ISS */
+			<0x10000 0x00000000 0x00000d5>,	/* L1D_READ_ACCESS -> L1D_LD */
+			<0x10001 0x00000000 0x0000015>,	/* L1D_READ_MISS -> L1D_MISS */
+			<0x10004 0x00000000 0x0000019>,	/* L1D_PREFETCH_ACCESS -> L1D_PF_REQ */
+			<0x10005 0x00000000 0x0000055>,	/* L1D_PREFETCH_MISS -> L1D_PREF_MISS */
+			<0x10009 0x00000000 0x0000014>,	/* L1I_READ_MISS -> L1I_MISS */
+			<0x1000d 0x00000000 0x0000044>,	/* L1I_PREFETCH_MISS -> L1I_PREF_MISS */
+			<0x10018 0x00000000 0x0000065>,	/* DTLB_READ_ACCESS -> L1D_TLB_ACCESS */
+			<0x10019 0x00000000 0x0000075>,	/* DTLB_READ_MISS -> L1D_TLB_MISS */
+			<0x10028 0x00000000 0x0000012>,	/* BPU_READ_ACCESS -> PRD_BRANCH */
+			<0x10029 0x00000000 0x0000092>;	/* BPU_READ_MISS -> PRD_BR_MIS */
+
+		/*
+		 * Mapping between the raw event(s) and all the MHPMCOUNTERx in a bitmap format
+		 * that can be used to monitor that raw event.
+		 * First/second column: 64-bit match value where the invariant bits of range of events are set.
+		 * Third/fourth column: 64-bit mask that will have all the variant bits of the range of events cleared.
+		 * Fifth column: 32-bit value to represent bitmap of all MHPMCOUNTERx that can monitor
+		 * these set of event(s).
+		 *
+		 * (!) Because bitmasks are used here for event groups, it is possible to call some events which
+		 * are covered by mask but not really exists. In this case, no exception raise will happen, but previous
+		 * value will be returned.
+		 */
+		riscv,raw-event-to-mhpmcounters =
+			/* General group */
+			<0x00000000 0x0000001 0xffffffff 0xffffff0f MHPMCOUNTER_BITMAP>,
+			/* Prediction group */
+			<0x00000000 0x0000002 0xffffffff 0xffffff0f MHPMCOUNTER_BITMAP>,
+			/* Execution group */
+			<0x00000000 0x0000003 0xffffffff 0xfffffe0f MHPMCOUNTER_BITMAP>,
+			/* L1I group */
+			<0x00000000 0x0000004 0xffffffff 0xfffffe0f MHPMCOUNTER_BITMAP>,
+			/* L1D group */
+			<0x00000000 0x0000005 0xffffffff 0xfffffe0f MHPMCOUNTER_BITMAP>,
+			/* Exceptions group */
+			<0x00000000 0x0000006 0xffffffff 0xffffff0f MHPMCOUNTER_BITMAP>,
+			/* IRQ group */
+			<0x00000000 0x0000007 0xffffffff 0xffffff0f MHPMCOUNTER_BITMAP>,
+			/* Traps group */
+			<0x00000000 0x0000008 0xffffffff 0xfffffe0f MHPMCOUNTER_BITMAP>,
+			/* L1D Prefetcher group */
+			<0x00000000 0x0000009 0xffffffff 0xffffff0f MHPMCOUNTER_BITMAP>,
+			/* HPW group */
+			<0x00000000 0x000000a 0xffffffff 0xffffff0f MHPMCOUNTER_BITMAP>,
+			/* sTLB group */
+			<0x00000000 0x000000b 0xffffffff 0xfffffe0f MHPMCOUNTER_BITMAP>;
+	};
+};
